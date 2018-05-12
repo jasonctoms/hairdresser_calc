@@ -1,22 +1,39 @@
 import 'package:flutter/material.dart';
 
-import 'package:hairdresser_calc/nav_drawer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:hairdresser_calc/commission_dialog.dart';
+
+const _commissionKey = 'commission';
+const _padding = EdgeInsets.all(16.0);
 
 class SalaryScreen extends StatefulWidget {
   SalaryScreen({Key key, this.title}) : super(key: key);
   final String title;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _SalaryScreenState createState() => _SalaryScreenState();
 }
 
-class _MyHomePageState extends State<SalaryScreen> {
-  int _counter = 0;
+class _SalaryScreenState extends State<SalaryScreen> {
+  String _commissionText;
+  double _commissionValue;
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
+  @override
+  void initState() {
+    super.initState();
+    _getCommissionFromSharedPrefs();
+  }
+
+  _getCommissionFromSharedPrefs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    double commissionValue = prefs.getDouble(_commissionKey);
+    setState(() => _setCommission(commissionValue));
+  }
+
+  _setCommission(double commissionValue) {
+    _commissionValue = commissionValue;
+    _commissionText = (commissionValue * 100).toString();
   }
 
   @override
@@ -25,26 +42,39 @@ class _MyHomePageState extends State<SalaryScreen> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      drawer: NavDrawer(),
-      body: Center(
+      body: Container(
+        padding: _padding,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.display1,
+          children: [
+            Text(_setCommissionText()),
+            RaisedButton(
+              child: Text('Change'),
+              color: Colors.blue,
+              onPressed: () => _openDialog(context),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0)),
+              padding: EdgeInsets.all(16.0),
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ),
     );
+  }
+
+  String _setCommissionText() {
+    if (_commissionValue == null) {
+      return 'Commission: X%';
+    }
+    return 'Commission: ' + _commissionText + '%';
+  }
+
+  //TODO: update this page after
+  _openDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return CommissionDialog(commission: _commissionText);
+        });
   }
 }
