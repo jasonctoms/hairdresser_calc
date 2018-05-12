@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 
-class NavDrawer extends StatelessWidget{
-
+class NavDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return new Drawer();
+    return Drawer();
   }
-
 }
