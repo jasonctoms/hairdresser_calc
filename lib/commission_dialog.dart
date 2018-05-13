@@ -19,20 +19,20 @@ class CommissionDialog extends StatefulWidget {
 
 class _CommissionDialogState extends State<CommissionDialog> {
   double _commissionValue;
+  String _commissionText;
   bool _showValidationError = false;
   final _inputKey = GlobalKey(debugLabel: 'commissionText');
 
   void _updateCommission(String input) {
     setState(() {
-      // Even though we are using the numerical keyboard, we still have to check
-      // for non-numerical input such as '5..0' or '6 -3'
       try {
-        final inputDouble = (double.parse(input)) / 100;
+        final inputDouble = (double.parse(input)) / 100.0;
         if (inputDouble > 1.0 || inputDouble < 0) {
           _showValidationError = true;
         } else {
           _showValidationError = false;
           _commissionValue = inputDouble;
+          _commissionText = input;
         }
       } on Exception catch (e) {
         print('Error: $e');
@@ -43,6 +43,11 @@ class _CommissionDialogState extends State<CommissionDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final currentCommission = Padding(
+      padding: _padding,
+      child: Text('The current commission value is ' + widget.commission + '%'),
+    );
+
     final commissionInput = Padding(
       padding: _padding,
       child: TextField(
@@ -56,15 +61,15 @@ class _CommissionDialogState extends State<CommissionDialog> {
             borderRadius: BorderRadius.circular(5.0),
           ),
         ),
-        // Since we only want numerical input, we use a number keyboard. There
-        // are also other keyboards for dates, emails, phone numbers, etc.
         keyboardType: TextInputType.number,
         onChanged: _updateCommission,
       ),
     );
 
     return AlertDialog(
-      content: commissionInput,
+      content: Column(
+        children: <Widget>[currentCommission, commissionInput],
+      ),
       actions: <Widget>[
         FlatButton(
           child: Text("Cancel"),
@@ -72,15 +77,16 @@ class _CommissionDialogState extends State<CommissionDialog> {
         ),
         FlatButton(
           child: Text("Done"),
-          onPressed:
-              _showValidationError ? null : () => _updateSharedPrefs(context),
+          onPressed: (_showValidationError || _commissionText == null)
+              ? null
+              : () => _updateSharedPrefs(context),
         ),
       ],
     );
   }
 
   _updateSharedPrefs(BuildContext context) {
-    Navigator.pop(context);
+    Navigator.pop(context, _commissionText);
     _setCommissionValue();
   }
 

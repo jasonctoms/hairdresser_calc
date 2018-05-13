@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -33,7 +34,7 @@ class _SalaryScreenState extends State<SalaryScreen> {
 
   _setCommission(double commissionValue) {
     _commissionValue = commissionValue;
-    _commissionText = (commissionValue * 100).toString();
+    _commissionText = (commissionValue * 100.0).toString();
   }
 
   @override
@@ -68,13 +69,18 @@ class _SalaryScreenState extends State<SalaryScreen> {
     return 'Commission: ' + _commissionText + '%';
   }
 
-  //TODO: update this page after
-  _openDialog(BuildContext context) {
-    showDialog(
+  Future<Null> _openDialog(BuildContext context) async {
+    var newCommission = await showDialog<String>(
         context: context,
         barrierDismissible: false,
         builder: (BuildContext context) {
           return CommissionDialog(commission: _commissionText);
         });
+    if (newCommission.isNotEmpty) {
+      setState(() {
+        _commissionText = newCommission;
+        _commissionValue = _getCommissionFromSharedPrefs();
+      });
+    }
   }
 }
