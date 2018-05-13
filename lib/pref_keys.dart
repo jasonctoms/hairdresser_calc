@@ -5,3 +5,4 @@ const currentIntakeKey = 'currentIntake';
 const daysLeftKey = 'daysLeft';
 const goalGrossKey = 'goalGrossKey';
 const goalNetKey = 'goalNetKey';
+const goalSalaryKey = 'goalSalaryKey';

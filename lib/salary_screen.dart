@@ -9,6 +9,8 @@ import 'package:hairdresser_calc/commission_dialog.dart';
 
 const _padding = EdgeInsets.all(16.0);
 
+enum GoalSelection { gross, net, salary }
+
 class SalaryScreen extends StatefulWidget {
   SalaryScreen({Key key, this.title}) : super(key: key);
   final String title;
@@ -28,8 +30,13 @@ class _SalaryScreenState extends State<SalaryScreen> {
   bool _showDaysLeftValidationError = false;
   final _daysLeftFieldKey = GlobalKey(debugLabel: 'daysLeft');
   TextEditingController _daysLeftController;
-  int _goalNet;
   int _goalGross;
+  int _goalNet;
+  int _goalSalary;
+  bool _showGoalValidationError = false;
+  final _goalFieldKey = GlobalKey(debugLabel: 'goal');
+  TextEditingController _goalController;
+  GoalSelection _goalSelection = GoalSelection.gross;
 
   @override
   void initState() {
@@ -44,17 +51,21 @@ class _SalaryScreenState extends State<SalaryScreen> {
     int daysLeft = prefs.getInt(prefKeys.daysLeftKey);
     int goalNet = prefs.getInt(prefKeys.goalNetKey);
     int goalGross = prefs.getInt(prefKeys.goalGrossKey);
-    setState(
-        () => _initPrefValues(currentIntake, daysLeft, goalNet, goalGross));
+    int goalSalary = prefs.getInt(prefKeys.goalSalaryKey);
+    setState(() => _initPrefValues(
+        currentIntake, daysLeft, goalNet, goalGross, goalSalary));
   }
 
-  _initPrefValues(int currentIntake, int daysLeft, int goalNet, int goalGross) {
+  _initPrefValues(int currentIntake, int daysLeft, int goalNet, int goalGross,
+      int goalSalary) {
     _currentIntake = currentIntake;
     _intakeController = TextEditingController(text: _currentIntake.toString());
     _daysLeft = daysLeft;
-    _daysLeftController = TextEditingController(text:_daysLeft.toString());
+    _daysLeftController = TextEditingController(text: _daysLeft.toString());
     _goalNet = goalNet;
+    _goalController = TextEditingController(text: _goalNet.toString());
     _goalGross = goalGross;
+    _goalSalary = goalSalary;
   }
 
   _getCommissionFromSharedPrefs() async {
@@ -95,15 +106,16 @@ class _SalaryScreenState extends State<SalaryScreen> {
         _showIntakeValidationError = false;
         _currentIntake = 0;
         _setCurrentIntakePref();
-      }
-      try {
-        final inputInt = int.parse(input);
-        _showIntakeValidationError = false;
-        _currentIntake = inputInt;
-        _setCurrentIntakePref();
-      } on Exception catch (e) {
-        print('Error: $e');
-        _showIntakeValidationError = true;
+      } else {
+        try {
+          final inputInt = int.parse(input);
+          _showIntakeValidationError = false;
+          _currentIntake = inputInt;
+          _setCurrentIntakePref();
+        } on Exception catch (e) {
+          print('Error: $e');
+          _showIntakeValidationError = true;
+        }
       }
     });
   }
@@ -114,28 +126,75 @@ class _SalaryScreenState extends State<SalaryScreen> {
         _showDaysLeftValidationError = false;
         _daysLeft = 0;
         _setDaysLeftPref();
-        //_intakeController.text = '0';
-      }
-      try {
-        final inputInt = int.parse(input);
-        _showDaysLeftValidationError = false;
-        _daysLeft = inputInt;
-        _setDaysLeftPref();
-      } on Exception catch (e) {
-        print('Error: $e');
-        _showDaysLeftValidationError = true;
+      } else {
+        try {
+          final inputInt = int.parse(input);
+          _showDaysLeftValidationError = false;
+          _daysLeft = inputInt;
+          _setDaysLeftPref();
+        } on Exception catch (e) {
+          print('Error: $e');
+          _showDaysLeftValidationError = true;
+        }
       }
     });
   }
 
   _setCurrentIntakePref() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(prefKeys.currentIntakeKey, _currentIntake);
+    prefs.setInt(prefKeys.currentIntakeKey, _currentIntake);
   }
 
   _setDaysLeftPref() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(prefKeys.daysLeftKey, _daysLeft);
+    prefs.setInt(prefKeys.daysLeftKey, _daysLeft);
+  }
+
+  _updateGoal(String input) {
+    setState(() {
+      if (input == null || input.isEmpty) {
+        _showGoalValidationError = false;
+        _goalGross = 0;
+        _goalNet = 0;
+        _goalSalary = 0;
+        _setGoalPrefs();
+      } else {
+        try {
+          final inputInt = int.parse(input);
+          _showGoalValidationError = false;
+          if (_goalSelection == GoalSelection.gross) {
+            _goalGross = inputInt;
+            var net = inputInt * 0.8;
+            _goalNet = net.round();
+            var salary = inputInt * _commissionValue;
+            _goalSalary = salary.round();
+          } else if (_goalSelection == GoalSelection.net) {
+            _goalNet = inputInt;
+            var gross = inputInt / 0.8;
+            _goalGross = gross.round();
+            var salary = gross * _commissionValue;
+            _goalSalary = salary.round();
+          } else {
+            _goalSalary = inputInt;
+            var net = inputInt / _commissionValue;
+            _goalNet = net.round();
+            var gross = net / 0.8;
+            _goalGross = gross.round();
+          }
+          _setGoalPrefs();
+        } on Exception catch (e) {
+          print('Error: $e');
+          _showGoalValidationError = true;
+        }
+      }
+    });
+  }
+
+  _setGoalPrefs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt(prefKeys.goalGrossKey, _goalGross);
+    prefs.setInt(prefKeys.goalNetKey, _goalNet);
+    prefs.setInt(prefKeys.goalSalaryKey, _goalSalary);
   }
 
   @override
@@ -208,6 +267,86 @@ class _SalaryScreenState extends State<SalaryScreen> {
       ],
     );
 
+    String _pickGoalLabel() {
+      if (_goalSelection == GoalSelection.gross) {
+        return 'Goal Gross';
+      } else if (_goalSelection == GoalSelection.net) {
+        return 'Goal Net';
+      } else {
+        return 'Goal Salary';
+      }
+    }
+
+    final goal = Column(children: [
+      Row(
+        children: [
+          Expanded(
+            child: RadioListTile<GoalSelection>(
+              title: Text(
+                'Gross',
+                style: Theme.of(context).textTheme.body1,
+              ),
+              value: GoalSelection.gross,
+              groupValue: _goalSelection,
+              onChanged: (GoalSelection value) {
+                setState(() {
+                  _goalSelection = value;
+                  _goalController.text = _goalGross.toString();
+                });
+              },
+            ),
+          ),
+          Expanded(
+            child: RadioListTile<GoalSelection>(
+              title: Text(
+                'Net',
+                style: Theme.of(context).textTheme.body1,
+              ),
+              value: GoalSelection.net,
+              groupValue: _goalSelection,
+              onChanged: (GoalSelection value) {
+                setState(() {
+                  _goalSelection = value;
+                  _goalController.text = _goalNet.toString();
+                });
+              },
+            ),
+          ),
+          Expanded(
+            child: RadioListTile<GoalSelection>(
+              title: Text(
+                'Salary',
+                style: Theme.of(context).textTheme.body1,
+              ),
+              value: GoalSelection.salary,
+              groupValue: _goalSelection,
+              onChanged: (GoalSelection value) {
+                setState(() {
+                  _goalSelection = value;
+                  _goalController.text = _goalSalary.toString();
+                });
+              },
+            ),
+          ),
+        ],
+      ),
+      TextField(
+        key: _goalFieldKey,
+        controller: _goalController,
+        style: Theme.of(context).textTheme.body1,
+        decoration: InputDecoration(
+          labelStyle: Theme.of(context).textTheme.body1,
+          errorText: _showGoalValidationError ? 'Invalid number entered' : null,
+          labelText: _pickGoalLabel(),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(5.0),
+          ),
+        ),
+        keyboardType: TextInputType.number,
+        onChanged: _updateGoal,
+      ),
+    ]);
+
     return new Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -218,6 +357,7 @@ class _SalaryScreenState extends State<SalaryScreen> {
             children: [
               commissionRow,
               currentIntakeAndDaysRow,
+              goal,
             ],
           )),
     );

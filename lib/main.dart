@@ -15,13 +15,10 @@ class MyApp extends StatelessWidget {
       title: 'Hairdresser Calc',
       theme: ThemeData(
         primarySwatch: Colors.blueGrey,
-        textTheme: Theme
-            .of(context)
-            .textTheme
-            .apply(
-          bodyColor: Colors.black,
-          displayColor: Colors.grey[600],
-        ),
+        textTheme: Theme.of(context).textTheme.apply(
+              bodyColor: Colors.black,
+              displayColor: Colors.grey[600],
+            ),
         textSelectionHandleColor: Colors.blue[900],
       ),
       home: SalaryScreen(title: 'Hairdresser Calc'),
@@ -44,11 +41,15 @@ class MyApp extends StatelessWidget {
     }
     int goalGross = prefs.getInt(prefKeys.goalGrossKey);
     if (goalGross == null) {
-      await prefs.setInt(prefKeys.goalGrossKey, 100000);
+      await prefs.setInt(prefKeys.goalGrossKey, 125000);
     }
     int goalNet = prefs.getInt(prefKeys.goalNetKey);
     if (goalNet == null) {
-      await prefs.setInt(prefKeys.goalNetKey, 125000);
+      await prefs.setInt(prefKeys.goalNetKey, 100000);
+    }
+    int goalSalary = prefs.getInt(prefKeys.goalSalaryKey);
+    if (goalSalary == null) {
+      await prefs.setInt(prefKeys.goalSalaryKey, 40000);
     }
   }
 }

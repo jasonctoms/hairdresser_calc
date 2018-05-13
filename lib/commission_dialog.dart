@@ -93,6 +93,6 @@ class _CommissionDialogState extends State<CommissionDialog> {
 
   _setCommissionValue() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setDouble(prefKeys.commissionKey, _commissionValue);
+    prefs.setDouble(prefKeys.commissionKey, _commissionValue);
   }
 }
