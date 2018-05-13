@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
+import 'pref_keys.dart' as prefKeys;
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 const _padding = EdgeInsets.all(16.0);
-const _commissionKey = 'commission';
 
 class CommissionDialog extends StatefulWidget {
   final String commission;
@@ -92,6 +93,6 @@ class _CommissionDialogState extends State<CommissionDialog> {
 
   _setCommissionValue() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setDouble(_commissionKey, _commissionValue);
+    await prefs.setDouble(prefKeys.commissionKey, _commissionValue);
   }
 }
