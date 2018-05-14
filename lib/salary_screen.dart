@@ -38,6 +38,14 @@ class _SalaryScreenState extends State<SalaryScreen> {
   TextEditingController _goalController;
   GoalSelection _goalSelection = GoalSelection.gross;
 
+  int _remainingIntake() {
+    return _goalGross - _currentIntake;
+  }
+
+  int _amountNeededPerDay() {
+    return (_remainingIntake() / _daysLeft).round();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -62,9 +70,9 @@ class _SalaryScreenState extends State<SalaryScreen> {
     _intakeController = TextEditingController(text: _currentIntake.toString());
     _daysLeft = daysLeft;
     _daysLeftController = TextEditingController(text: _daysLeft.toString());
-    _goalNet = goalNet;
-    _goalController = TextEditingController(text: _goalNet.toString());
     _goalGross = goalGross;
+    _goalController = TextEditingController(text: _goalGross.toString());
+    _goalNet = goalNet;
     _goalSalary = goalSalary;
   }
 
@@ -166,13 +174,13 @@ class _SalaryScreenState extends State<SalaryScreen> {
             _goalGross = inputInt;
             var net = inputInt * 0.8;
             _goalNet = net.round();
-            var salary = inputInt * _commissionValue;
+            var salary = net * _commissionValue;
             _goalSalary = salary.round();
           } else if (_goalSelection == GoalSelection.net) {
             _goalNet = inputInt;
             var gross = inputInt / 0.8;
             _goalGross = gross.round();
-            var salary = gross * _commissionValue;
+            var salary = inputInt * _commissionValue;
             _goalSalary = salary.round();
           } else {
             _goalSalary = inputInt;
@@ -195,6 +203,15 @@ class _SalaryScreenState extends State<SalaryScreen> {
     prefs.setInt(prefKeys.goalGrossKey, _goalGross);
     prefs.setInt(prefKeys.goalNetKey, _goalNet);
     prefs.setInt(prefKeys.goalSalaryKey, _goalSalary);
+  }
+
+  String _formatMoney(int value) {
+    var str = value.toString();
+    RegExp reg = new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
+    Function matchFunc = (Match match) => '${match[1]} ';
+    var formattedString = str.replaceAllMapped(reg, matchFunc);
+    formattedString = formattedString + 'kr';
+    return formattedString;
   }
 
   @override
@@ -277,57 +294,41 @@ class _SalaryScreenState extends State<SalaryScreen> {
       }
     }
 
+    Widget goalRadio(String title, GoalSelection goalType) {
+      return Expanded(
+        flex: 1,
+        child: Row(
+          children: [
+            Radio<GoalSelection>(
+              value: goalType,
+              groupValue: _goalSelection,
+              onChanged: (GoalSelection value) {
+                setState(() {
+                  _goalSelection = value;
+                  if (value == GoalSelection.gross)
+                    _goalController.text = _goalGross.toString();
+                  else if (value == GoalSelection.net)
+                    _goalController.text = _goalNet.toString();
+                  else
+                    _goalController.text = _goalSalary.toString();
+                });
+              },
+            ),
+            Text(
+              title,
+              style: Theme.of(context).textTheme.body1,
+            ),
+          ],
+        ),
+      );
+    }
+
     final goal = Column(children: [
       Row(
         children: [
-          Expanded(
-            child: RadioListTile<GoalSelection>(
-              title: Text(
-                'Gross',
-                style: Theme.of(context).textTheme.body1,
-              ),
-              value: GoalSelection.gross,
-              groupValue: _goalSelection,
-              onChanged: (GoalSelection value) {
-                setState(() {
-                  _goalSelection = value;
-                  _goalController.text = _goalGross.toString();
-                });
-              },
-            ),
-          ),
-          Expanded(
-            child: RadioListTile<GoalSelection>(
-              title: Text(
-                'Net',
-                style: Theme.of(context).textTheme.body1,
-              ),
-              value: GoalSelection.net,
-              groupValue: _goalSelection,
-              onChanged: (GoalSelection value) {
-                setState(() {
-                  _goalSelection = value;
-                  _goalController.text = _goalNet.toString();
-                });
-              },
-            ),
-          ),
-          Expanded(
-            child: RadioListTile<GoalSelection>(
-              title: Text(
-                'Salary',
-                style: Theme.of(context).textTheme.body1,
-              ),
-              value: GoalSelection.salary,
-              groupValue: _goalSelection,
-              onChanged: (GoalSelection value) {
-                setState(() {
-                  _goalSelection = value;
-                  _goalController.text = _goalSalary.toString();
-                });
-              },
-            ),
-          ),
+          goalRadio('Gross', GoalSelection.gross),
+          goalRadio('Net', GoalSelection.net),
+          goalRadio('Salary', GoalSelection.salary),
         ],
       ),
       TextField(
@@ -347,19 +348,38 @@ class _SalaryScreenState extends State<SalaryScreen> {
       ),
     ]);
 
+    final goalInfo = Column(
+      children: <Widget>[
+        Text('Goal gross is ' + _formatMoney(_goalGross)),
+        Text('Goal net is ' + _formatMoney(_goalNet)),
+        Text('Goal salary is ' + _formatMoney(_goalSalary)),
+      ],
+    );
+
+    final remainingIntake =
+        Text('Remaining intake is ' + _formatMoney(_remainingIntake()));
+
+    final neededPerDay = Text(
+        'Intake needed per day is ' + _formatMoney(_amountNeededPerDay()));
+
     return new Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Container(
-          padding: _padding,
-          child: Column(
-            children: [
-              commissionRow,
-              currentIntakeAndDaysRow,
-              goal,
-            ],
-          )),
+      body: SingleChildScrollView(
+        child: Container(
+            padding: _padding,
+            child: Column(
+              children: [
+                commissionRow,
+                currentIntakeAndDaysRow,
+                goal,
+                goalInfo,
+                remainingIntake,
+                neededPerDay,
+              ],
+            )),
+      ),
     );
   }
 }
