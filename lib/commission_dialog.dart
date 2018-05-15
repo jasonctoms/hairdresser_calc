@@ -45,33 +45,41 @@ class _CommissionDialogState extends State<CommissionDialog> {
   @override
   Widget build(BuildContext context) {
     final currentCommission = Padding(
-      padding: _padding,
-      child: Text('The current commission value is ' + widget.commission + '%'),
+      padding: EdgeInsets.only(bottom: 32.0, top: 16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('Current commission:'),
+          Padding(padding: EdgeInsets.symmetric(horizontal: 2.0)),
+          Text(
+            widget.commission + '%',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
     );
 
-    final commissionInput = Padding(
-      padding: _padding,
-      child: TextField(
-        key: _inputKey,
-        style: Theme.of(context).textTheme.body1,
-        decoration: InputDecoration(
-          labelStyle: Theme.of(context).textTheme.body1,
-          errorText: _showValidationError ? 'Invalid number entered' : null,
-          labelText: 'Commission %',
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5.0),
-          ),
+    final commissionInput = TextField(
+      key: _inputKey,
+      style: Theme.of(context).textTheme.body1,
+      decoration: InputDecoration(
+        labelStyle: Theme.of(context).textTheme.body1,
+        errorText: _showValidationError ? 'Invalid number entered' : null,
+        labelText: 'Commission %',
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5.0),
         ),
-        keyboardType: TextInputType.number,
-        onChanged: _updateCommission,
       ),
+      keyboardType: TextInputType.number,
+      onChanged: _updateCommission,
     );
 
     return AlertDialog(
       content: Column(
-        children: <Widget>[currentCommission, commissionInput],
+        mainAxisSize: MainAxisSize.min,
+        children: [currentCommission, commissionInput],
       ),
-      actions: <Widget>[
+      actions: [
         FlatButton(
           child: Text("Cancel"),
           onPressed: () => Navigator.pop(context),

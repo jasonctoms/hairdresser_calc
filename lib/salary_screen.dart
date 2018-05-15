@@ -226,16 +226,15 @@ class _SalaryScreenState extends State<SalaryScreen> {
       padding: EdgeInsets.only(bottom: 16.0, right: 16.0, left: 16.0),
       child: Row(
         children: [
-          Padding(
-            padding: EdgeInsets.only(right: 4.0),
-            child: Row(children: [
+          Row(
+            children: [
               Text('Commission:'),
               Padding(padding: EdgeInsets.symmetric(horizontal: 2.0)),
               Text(
                 _setCommissionText(),
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-            ]),
+            ],
           ),
           FlatButton(
             child: Text(
