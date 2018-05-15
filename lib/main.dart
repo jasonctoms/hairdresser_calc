@@ -14,12 +14,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Hairdresser Calc',
       theme: ThemeData(
-        primarySwatch: Colors.blueGrey,
+        primarySwatch: Colors.purple,
         textTheme: Theme.of(context).textTheme.apply(
               bodyColor: Colors.black,
               displayColor: Colors.grey[600],
             ),
-        textSelectionHandleColor: Colors.blue[900],
+        textSelectionHandleColor: Colors.green[800],
       ),
       home: SalaryScreen(title: 'Hairdresser Calc'),
     );

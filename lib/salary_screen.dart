@@ -97,9 +97,9 @@ class _SalaryScreenState extends State<SalaryScreen> {
 
   String _setCommissionText() {
     if (_commissionValue == null) {
-      return 'Commission: X%';
+      return 'X%';
     }
-    return 'Commission: ' + _commissionText + '%';
+    return _commissionText + '%';
   }
 
   Future<Null> _openDialog(BuildContext context) async {
@@ -228,16 +228,23 @@ class _SalaryScreenState extends State<SalaryScreen> {
         children: [
           Padding(
             padding: EdgeInsets.only(right: 4.0),
-            child: Text(_setCommissionText()),
+            child: Row(children: [
+              Text('Commission:'),
+              Padding(padding: EdgeInsets.symmetric(horizontal: 2.0)),
+              Text(
+                _setCommissionText(),
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ]),
           ),
           FlatButton(
             child: Text(
               'CHANGE',
-              style: new TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.bold,
               ),
             ),
-            textColor: Colors.blue,
+            textColor: Colors.purpleAccent,
             onPressed: () => _openDialog(context),
           ),
         ],
@@ -396,7 +403,9 @@ class _SalaryScreenState extends State<SalaryScreen> {
         Text(
           _formatMoney(_remainingIntake()),
           style: TextStyle(
-              fontWeight: FontWeight.bold, color: Colors.blue, fontSize: 30.0),
+              fontWeight: FontWeight.bold,
+              color: Colors.purple[600],
+              fontSize: 30.0),
         ),
       ]),
     );
@@ -408,7 +417,9 @@ class _SalaryScreenState extends State<SalaryScreen> {
         Text(
           _formatMoney(_amountNeededPerDay()),
           style: TextStyle(
-              fontWeight: FontWeight.bold, color: Colors.blue, fontSize: 30.0),
+              fontWeight: FontWeight.bold,
+              color: Colors.purple[600],
+              fontSize: 30.0),
         ),
       ]),
     );
