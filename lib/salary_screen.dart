@@ -39,11 +39,17 @@ class _SalaryScreenState extends State<SalaryScreen> {
   GoalSelection _goalSelection = GoalSelection.gross;
 
   int _remainingIntake() {
-    return _goalGross - _currentIntake;
+    if (_goalGross == null || _currentIntake == null)
+      return 0;
+    else
+      return _goalGross - _currentIntake;
   }
 
   int _amountNeededPerDay() {
-    return (_remainingIntake() / _daysLeft).round();
+    if (_daysLeft == null)
+      return 0;
+    else
+      return (_remainingIntake() / _daysLeft).round();
   }
 
   @override
@@ -103,7 +109,7 @@ class _SalaryScreenState extends State<SalaryScreen> {
         builder: (BuildContext context) {
           return CommissionDialog(commission: _commissionText);
         });
-    if (newCommission.isNotEmpty) {
+    if (newCommission != null) {
       _getCommissionFromSharedPrefs();
     }
   }
@@ -221,15 +227,18 @@ class _SalaryScreenState extends State<SalaryScreen> {
       child: Row(
         children: [
           Padding(
-            padding: EdgeInsets.only(right: 16.0),
+            padding: EdgeInsets.only(right: 4.0),
             child: Text(_setCommissionText()),
           ),
-          RaisedButton(
-            child: Text('Change'),
-            color: Colors.blue,
+          FlatButton(
+            child: Text(
+              'CHANGE',
+              style: new TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            textColor: Colors.blue,
             onPressed: () => _openDialog(context),
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30.0)),
           ),
         ],
       ),
@@ -348,19 +357,67 @@ class _SalaryScreenState extends State<SalaryScreen> {
       ),
     ]);
 
-    final goalInfo = Column(
-      children: <Widget>[
-        Text('Goal gross is ' + _formatMoney(_goalGross)),
-        Text('Goal net is ' + _formatMoney(_goalNet)),
-        Text('Goal salary is ' + _formatMoney(_goalSalary)),
-      ],
+    final goalInfo = Padding(
+      padding: EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Column(
+            children: [
+              Text('Goal gross:'),
+              Text(_formatMoney(_goalGross),
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+            ],
+          ),
+          Column(
+            children: [
+              Text('Goal net:'),
+              Text(
+                _formatMoney(_goalNet),
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          Column(
+            children: [
+              Text('Goal salary:'),
+              Text(_formatMoney(_goalSalary),
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+            ],
+          ),
+        ],
+      ),
     );
 
-    final remainingIntake =
-        Text('Remaining intake is ' + _formatMoney(_remainingIntake()));
+    final remainingIntake = Padding(
+      padding: _padding,
+      child: Column(children: [
+        Text('Remaining intake:'),
+        Text(
+          _formatMoney(_remainingIntake()),
+          style: TextStyle(
+              fontWeight: FontWeight.bold, color: Colors.blue, fontSize: 30.0),
+        ),
+      ]),
+    );
 
-    final neededPerDay = Text(
-        'Intake needed per day is ' + _formatMoney(_amountNeededPerDay()));
+    final neededPerDay = Padding(
+      padding: _padding,
+      child: Column(children: [
+        Text('Intake needed per day:'),
+        Text(
+          _formatMoney(_amountNeededPerDay()),
+          style: TextStyle(
+              fontWeight: FontWeight.bold, color: Colors.blue, fontSize: 30.0),
+        ),
+      ]),
+    );
+
+    final importantNumbers = Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [remainingIntake, neededPerDay],
+    );
 
     return new Scaffold(
       appBar: AppBar(
@@ -375,8 +432,7 @@ class _SalaryScreenState extends State<SalaryScreen> {
                 currentIntakeAndDaysRow,
                 goal,
                 goalInfo,
-                remainingIntake,
-                neededPerDay,
+                importantNumbers,
               ],
             )),
       ),
