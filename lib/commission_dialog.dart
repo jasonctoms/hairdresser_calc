@@ -4,8 +4,7 @@ import 'package:meta/meta.dart';
 import 'pref_keys.dart' as prefKeys;
 
 import 'package:shared_preferences/shared_preferences.dart';
-
-const _padding = EdgeInsets.all(16.0);
+import 'package:hairdresser_calc/localized_strings.dart';
 
 class CommissionDialog extends StatefulWidget {
   final String commission;
@@ -49,7 +48,7 @@ class _CommissionDialogState extends State<CommissionDialog> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('Current commission:'),
+          Text(LocalizedStrings.of(context).currentCommission),
           Padding(padding: EdgeInsets.symmetric(horizontal: 2.0)),
           Text(
             widget.commission + '%',
@@ -64,8 +63,10 @@ class _CommissionDialogState extends State<CommissionDialog> {
       style: Theme.of(context).textTheme.body1,
       decoration: InputDecoration(
         labelStyle: Theme.of(context).textTheme.body1,
-        errorText: _showValidationError ? 'Invalid number entered' : null,
-        labelText: 'Commission %',
+        errorText: _showValidationError
+            ? LocalizedStrings.of(context).validationMessage
+            : null,
+        labelText: LocalizedStrings.of(context).commissionPercent,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5.0),
         ),
@@ -81,11 +82,11 @@ class _CommissionDialogState extends State<CommissionDialog> {
       ),
       actions: [
         FlatButton(
-          child: Text("Cancel"),
+          child: Text(LocalizedStrings.of(context).cancel),
           onPressed: () => Navigator.pop(context),
         ),
         FlatButton(
-          child: Text("Done"),
+          child: Text(LocalizedStrings.of(context).done),
           onPressed: (_showValidationError || _commissionText == null)
               ? null
               : () => _updateSharedPrefs(context),

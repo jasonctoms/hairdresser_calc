@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'pref_keys.dart' as prefKeys;
 import 'package:hairdresser_calc/commission_dialog.dart';
+import 'package:hairdresser_calc/localized_strings.dart';
 
 const _padding = EdgeInsets.all(16.0);
 
@@ -228,7 +229,7 @@ class _SalaryScreenState extends State<SalaryScreen> {
         children: [
           Row(
             children: [
-              Text('Commission:'),
+              Text(LocalizedStrings.of(context).commission),
               Padding(padding: EdgeInsets.symmetric(horizontal: 2.0)),
               Text(
                 _setCommissionText(),
@@ -238,7 +239,7 @@ class _SalaryScreenState extends State<SalaryScreen> {
           ),
           FlatButton(
             child: Text(
-              'CHANGE',
+              LocalizedStrings.of(context).change,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
               ),
@@ -262,9 +263,9 @@ class _SalaryScreenState extends State<SalaryScreen> {
               decoration: InputDecoration(
                 labelStyle: Theme.of(context).textTheme.body1,
                 errorText: _showIntakeValidationError
-                    ? 'Invalid number entered'
+                    ? LocalizedStrings.of(context).validationMessage
                     : null,
-                labelText: 'Current Intake',
+                labelText: LocalizedStrings.of(context).currentIntake,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5.0),
                 ),
@@ -284,9 +285,9 @@ class _SalaryScreenState extends State<SalaryScreen> {
               decoration: InputDecoration(
                 labelStyle: Theme.of(context).textTheme.body1,
                 errorText: _showDaysLeftValidationError
-                    ? 'Invalid number entered'
+                    ? LocalizedStrings.of(context).validationMessage
                     : null,
-                labelText: 'Days Left',
+                labelText: LocalizedStrings.of(context).daysLeft,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5.0),
                 ),
@@ -301,11 +302,11 @@ class _SalaryScreenState extends State<SalaryScreen> {
 
     String _pickGoalLabel() {
       if (_goalSelection == GoalSelection.gross) {
-        return 'Goal Gross';
+        return LocalizedStrings.of(context).goalGross;
       } else if (_goalSelection == GoalSelection.net) {
-        return 'Goal Net';
+        return LocalizedStrings.of(context).goalNet;
       } else {
-        return 'Goal Salary';
+        return LocalizedStrings.of(context).goalSalary;
       }
     }
 
@@ -341,9 +342,9 @@ class _SalaryScreenState extends State<SalaryScreen> {
     final goal = Column(children: [
       Row(
         children: [
-          goalRadio('Gross', GoalSelection.gross),
-          goalRadio('Net', GoalSelection.net),
-          goalRadio('Salary', GoalSelection.salary),
+          goalRadio(LocalizedStrings.of(context).gross, GoalSelection.gross),
+          goalRadio(LocalizedStrings.of(context).net, GoalSelection.net),
+          goalRadio(LocalizedStrings.of(context).salary, GoalSelection.salary),
         ],
       ),
       TextField(
@@ -352,7 +353,9 @@ class _SalaryScreenState extends State<SalaryScreen> {
         style: Theme.of(context).textTheme.body1,
         decoration: InputDecoration(
           labelStyle: Theme.of(context).textTheme.body1,
-          errorText: _showGoalValidationError ? 'Invalid number entered' : null,
+          errorText: _showGoalValidationError
+              ? LocalizedStrings.of(context).validationMessage
+              : null,
           labelText: _pickGoalLabel(),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(5.0),
@@ -370,14 +373,14 @@ class _SalaryScreenState extends State<SalaryScreen> {
         children: [
           Column(
             children: [
-              Text('Goal gross:'),
+              Text(LocalizedStrings.of(context).goalGrossResult),
               Text(_formatMoney(_goalGross),
                   style: TextStyle(fontWeight: FontWeight.bold)),
             ],
           ),
           Column(
             children: [
-              Text('Goal net:'),
+              Text(LocalizedStrings.of(context).goalNetResult),
               Text(
                 _formatMoney(_goalNet),
                 style: TextStyle(fontWeight: FontWeight.bold),
@@ -386,7 +389,7 @@ class _SalaryScreenState extends State<SalaryScreen> {
           ),
           Column(
             children: [
-              Text('Goal salary:'),
+              Text(LocalizedStrings.of(context).goalSalaryResult),
               Text(_formatMoney(_goalSalary),
                   style: TextStyle(fontWeight: FontWeight.bold)),
             ],
@@ -398,7 +401,7 @@ class _SalaryScreenState extends State<SalaryScreen> {
     final remainingIntake = Padding(
       padding: _padding,
       child: Column(children: [
-        Text('Remaining intake:'),
+        Text(LocalizedStrings.of(context).intakeNeededToReachGoal),
         Text(
           _formatMoney(_remainingIntake()),
           style: TextStyle(
@@ -412,7 +415,7 @@ class _SalaryScreenState extends State<SalaryScreen> {
     final neededPerDay = Padding(
       padding: _padding,
       child: Column(children: [
-        Text('Intake needed per day:'),
+        Text(LocalizedStrings.of(context).intakeNeededPerDay),
         Text(
           _formatMoney(_amountNeededPerDay()),
           style: TextStyle(
@@ -431,20 +434,21 @@ class _SalaryScreenState extends State<SalaryScreen> {
 
     return new Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(LocalizedStrings.of(context).appName),
       ),
       body: SingleChildScrollView(
         child: Container(
-            padding: _padding,
-            child: Column(
-              children: [
-                commissionRow,
-                currentIntakeAndDaysRow,
-                goal,
-                goalInfo,
-                importantNumbers,
-              ],
-            )),
+          padding: _padding,
+          child: Column(
+            children: [
+              commissionRow,
+              currentIntakeAndDaysRow,
+              goal,
+              goalInfo,
+              importantNumbers,
+            ],
+          ),
+        ),
       ),
     );
   }

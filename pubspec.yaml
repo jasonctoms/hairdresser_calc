@@ -4,6 +4,8 @@ description: An application to help calculate salary for hairdressers.
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
 
   cupertino_icons: "^0.1.2"
   shared_preferences: "^0.4.1"
