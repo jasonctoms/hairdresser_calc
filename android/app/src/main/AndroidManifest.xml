@@ -5,7 +5,7 @@
 
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="hairdresser_calc"
+        android:label="@string/launcher_name"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
