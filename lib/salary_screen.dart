@@ -398,32 +398,42 @@ class _SalaryScreenState extends State<SalaryScreen> {
       ),
     );
 
-    final remainingIntake = Padding(
-      padding: _padding,
-      child: Column(children: [
-        Text(LocalizedStrings.of(context).intakeNeededToReachGoal),
-        Text(
-          _formatMoney(_remainingIntake()),
-          style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.purple[600],
-              fontSize: 30.0),
-        ),
-      ]),
+    final remainingIntake = Flexible(
+      flex: 1,
+      child: Padding(
+        padding: _padding,
+        child: Column(children: [
+          Text(
+            LocalizedStrings.of(context).intakeNeededToReachGoal,
+            textAlign: TextAlign.center,
+          ),
+          Text(
+            _formatMoney(_remainingIntake()),
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.purple[600],
+                fontSize: 30.0),
+          ),
+        ]),
+      ),
     );
 
-    final neededPerDay = Padding(
-      padding: _padding,
-      child: Column(children: [
-        Text(LocalizedStrings.of(context).intakeNeededPerDay),
-        Text(
-          _formatMoney(_amountNeededPerDay()),
-          style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.purple[600],
-              fontSize: 30.0),
-        ),
-      ]),
+    final neededPerDay = Flexible(
+      flex: 1,
+      child: Padding(
+        padding: _padding,
+        child: Column(children: [
+          Text(LocalizedStrings.of(context).intakeNeededPerDay,
+              textAlign: TextAlign.center),
+          Text(
+            _formatMoney(_amountNeededPerDay()),
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.purple[600],
+                fontSize: 30.0),
+          ),
+        ]),
+      ),
     );
 
     final importantNumbers = Row(
