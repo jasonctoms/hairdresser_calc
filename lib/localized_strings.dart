@@ -14,7 +14,7 @@ class LocalizedStrings {
 
   static Map<String, Map<String, String>> _localizedValues = {
     'en': {
-      'appName': 'Hairdresser Calc',
+      'appName': 'Hairdre\$\$er',
       'cancel': 'Cancel',
       'done': 'Done',
       'commission': 'Commission:',
@@ -37,7 +37,7 @@ class LocalizedStrings {
       'intakeNeededPerDay': 'Intake needed per day:',
     },
     'nb': {
-      'appName': 'Frisør Kalk',
+      'appName': 'Fri\$ør',
       'cancel': 'Avbryt',
       'done': 'Ferdig',
       'commission': 'Provisjon:',
