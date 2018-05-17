@@ -13,3 +13,7 @@ build/
 pubspec\.lock
 
 \.idea/assetWizardSettings\.xml
+
+android/key\.properties
+
+*.jks

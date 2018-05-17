@@ -15,6 +15,7 @@ class HairdresserCalc extends StatelessWidget {
   Widget build(BuildContext context) {
     _setDefaultPrefs();
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       onGenerateTitle: (BuildContext context) => LocalizedStrings.of(context).appName,
       localizationsDelegates: [
         const LocalizedStringsDelegate(),
