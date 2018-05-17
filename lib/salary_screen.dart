@@ -427,48 +427,58 @@ class _SalaryScreenState extends State<SalaryScreen> {
       ),
     );
 
-    final remainingIntake = Flexible(
-      flex: 1,
-      child: Padding(
-        padding: _padding,
-        child: Column(children: [
-          Text(
-            LocalizedStrings.of(context).intakeNeededToReachGoal,
-            textAlign: TextAlign.center,
+    final importantNumbers = Padding(
+      padding: EdgeInsets.only(top: 16.0),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Expanded(
+                flex: 1,
+                child: Text(
+                  LocalizedStrings.of(context).intakeNeededToReachGoal,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: Text(LocalizedStrings.of(context).intakeNeededPerDay,
+                    textAlign: TextAlign.center),
+              ),
+            ],
           ),
-          Text(
-            _formatMoney(_remainingIntake()),
-            style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.purple[600],
-                fontSize: 30.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Expanded(
+                flex: 1,
+                child: Text(
+                  _formatMoney(_remainingIntake()),
+                  maxLines: 1,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.purple[600],
+                      fontSize: 30.0),
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: Text(
+                  _formatMoney(_amountNeededPerDay()),
+                  maxLines: 1,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.purple[600],
+                      fontSize: 30.0),
+                ),
+              ),
+            ],
           ),
-        ]),
+        ],
       ),
-    );
-
-    final neededPerDay = Flexible(
-      flex: 1,
-      child: Padding(
-        padding: _padding,
-        child: Column(children: [
-          Text(LocalizedStrings.of(context).intakeNeededPerDay,
-              textAlign: TextAlign.center),
-          Text(
-            _formatMoney(_amountNeededPerDay()),
-            style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.purple[600],
-                fontSize: 30.0),
-          ),
-        ]),
-      ),
-    );
-
-    final importantNumbers = Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [remainingIntake, neededPerDay],
     );
 
     return new Scaffold(
