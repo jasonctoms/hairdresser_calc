@@ -48,7 +48,7 @@ class _SalaryScreenState extends State<SalaryScreen> {
 
   int _amountNeededPerDay() {
     if (_daysLeft == null)
-      return 0;
+      return 1;
     else
       return (_remainingIntake() / _daysLeft).round();
   }
@@ -168,7 +168,7 @@ class _SalaryScreenState extends State<SalaryScreen> {
     setState(() {
       if (input == null || input.isEmpty) {
         _showDaysLeftValidationError = false;
-        _daysLeft = 0;
+        _daysLeft = 1;
         _setDaysLeftPref();
       } else {
         try {
