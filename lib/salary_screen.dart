@@ -13,8 +13,7 @@ const _padding = EdgeInsets.all(16.0);
 enum GoalSelection { gross, net, salary }
 
 class SalaryScreen extends StatefulWidget {
-  SalaryScreen({Key key, this.title}) : super(key: key);
-  final String title;
+  SalaryScreen({Key key}) : super(key: key);
 
   @override
   _SalaryScreenState createState() => _SalaryScreenState();
@@ -505,23 +504,18 @@ class _SalaryScreenState extends State<SalaryScreen> {
       ),
     );
 
-    return new Scaffold(
-      appBar: AppBar(
-        title: Text(LocalizedStrings.of(context).appName),
-      ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: _padding,
-          child: Column(
-            children: [
-              commissionRow,
-              currentIntakeAndDaysRow,
-              goal,
-              goalInfo,
-              currentSalary,
-              importantNumbers,
-            ],
-          ),
+    return new SingleChildScrollView(
+      child: Container(
+        padding: _padding,
+        child: Column(
+          children: [
+            commissionRow,
+            currentIntakeAndDaysRow,
+            goal,
+            goalInfo,
+            currentSalary,
+            importantNumbers,
+          ],
         ),
       ),
     );
