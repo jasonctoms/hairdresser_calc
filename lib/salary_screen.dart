@@ -48,9 +48,16 @@ class _SalaryScreenState extends State<SalaryScreen> {
 
   int _amountNeededPerDay() {
     if (_daysLeft == null)
-      return 1;
+      return 0;
     else
       return (_remainingIntake() / _daysLeft).round();
+  }
+
+  int _salaryWithCurrentIntake() {
+    if (_currentIntake == null || _commissionValue == null)
+      return 0;
+    else
+      return (_currentIntake * 0.8 * _commissionValue).round();
   }
 
   @override
@@ -427,8 +434,25 @@ class _SalaryScreenState extends State<SalaryScreen> {
       ),
     );
 
+    final currentSalary = Padding(
+      padding: EdgeInsets.only(top: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(LocalizedStrings.of(context).salaryWithCurrentIntake),
+          Text(
+            _formatMoney(_salaryWithCurrentIntake()),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.purple[600],
+            ),
+          ),
+        ],
+      ),
+    );
+
     final importantNumbers = Padding(
-      padding: EdgeInsets.only(top: 16.0),
+      padding: EdgeInsets.only(top: 32.0),
       child: Column(
         children: [
           Row(
@@ -494,6 +518,7 @@ class _SalaryScreenState extends State<SalaryScreen> {
               currentIntakeAndDaysRow,
               goal,
               goalInfo,
+              currentSalary,
               importantNumbers,
             ],
           ),

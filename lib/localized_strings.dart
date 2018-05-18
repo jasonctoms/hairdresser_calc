@@ -17,6 +17,8 @@ class LocalizedStrings {
       'appName': 'Hairdre\$\$er',
       'cancel': 'Cancel',
       'done': 'Done',
+
+      //SalaryScreen---------------------------------
       'commission': 'Commission:',
       'currentCommission': 'Current commission:',
       'commissionPercent': 'Commission %',
@@ -33,6 +35,7 @@ class LocalizedStrings {
       'goalGrossResult': 'Goal gross:',
       'goalNetResult': 'Goal net:',
       'goalSalaryResult': 'Goal salary:',
+      'salaryWithCurrentIntake': 'Salary with current intake:',
       'intakeNeededToReachGoal': 'Intake needed to reach goal:',
       'intakeNeededPerDay': 'Intake needed per day:',
     },
@@ -40,6 +43,8 @@ class LocalizedStrings {
       'appName': 'Fri\$ør',
       'cancel': 'Avbryt',
       'done': 'Ferdig',
+
+      //SalaryScreen---------------------------------
       'commission': 'Provisjon:',
       'currentCommission': 'Nåværende provisjon:',
       'commissionPercent': 'Provisjon %',
@@ -56,6 +61,7 @@ class LocalizedStrings {
       'goalGrossResult': 'Mål brutto:',
       'goalNetResult': 'Mål netto:',
       'goalSalaryResult': 'Mål lønn:',
+      'salaryWithCurrentIntake': 'Lønn med nåværende inntak:',
       'intakeNeededToReachGoal': 'Må ta inn å oppnå mål:',
       'intakeNeededPerDay': 'Må ta inn per dag:',
     },
@@ -135,6 +141,10 @@ class LocalizedStrings {
 
   String get goalSalaryResult {
     return _localizedValues[locale.languageCode]['goalSalaryResult'];
+  }
+
+  String get salaryWithCurrentIntake {
+    return _localizedValues[locale.languageCode]['salaryWithCurrentIntake'];
   }
 
   String get intakeNeededToReachGoal {
