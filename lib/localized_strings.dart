@@ -17,7 +17,6 @@ class LocalizedStrings {
       'appName': 'Hairdre\$\$er',
       'cancel': 'Cancel',
       'done': 'Done',
-
       //SalaryScreen---------------------------------
       'commission': 'Commission:',
       'currentCommission': 'Current commission:',
@@ -38,12 +37,13 @@ class LocalizedStrings {
       'salaryWithCurrentIntake': 'Salary with current intake:',
       'intakeNeededToReachGoal': 'Intake needed to reach goal:',
       'intakeNeededPerDay': 'Intake needed per day:',
+      //Rebooking/Hair mask---------------------------
+      'rebookingHairMaskTitle': 'Rebooking/Hair mask'
     },
     'nb': {
       'appName': 'Fri\$ør',
       'cancel': 'Avbryt',
       'done': 'Ferdig',
-
       //SalaryScreen---------------------------------
       'commission': 'Provisjon:',
       'currentCommission': 'Nåværende provisjon:',
@@ -64,6 +64,8 @@ class LocalizedStrings {
       'salaryWithCurrentIntake': 'Lønn med nåværende inntak:',
       'intakeNeededToReachGoal': 'Må ta inn å oppnå mål:',
       'intakeNeededPerDay': 'Må ta inn per dag:',
+      //Rebooking/Hair mask---------------------------
+      'rebookingHairMaskTitle': 'Rebooking/Hair mask'
     },
   };
 
@@ -153,6 +155,10 @@ class LocalizedStrings {
 
   String get intakeNeededPerDay {
     return _localizedValues[locale.languageCode]['intakeNeededPerDay'];
+  }
+
+  String get rebookingHairMaskTitle {
+    return _localizedValues[locale.languageCode]['rebookingHairMaskTitle'];
   }
 }
 

@@ -14,7 +14,7 @@ class MainTabBar extends StatelessWidget {
           bottom: TabBar(
             tabs: [
               Tab(text: LocalizedStrings.of(context).salary),
-              Tab(text: 'Other'),
+              Tab(text: LocalizedStrings.of(context).rebookingHairMaskTitle),
             ],
           ),
         ),
