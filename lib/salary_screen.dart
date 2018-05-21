@@ -26,10 +26,7 @@ class _SalaryScreenState extends State<SalaryScreen> {
   bool _showIntakeValidationError = false;
   final _intakeFieldKey = GlobalKey(debugLabel: 'currentIntake');
   TextEditingController _intakeController;
-  int _daysLeft;
-  bool _showDaysLeftValidationError = false;
-  final _daysLeftFieldKey = GlobalKey(debugLabel: 'daysLeft');
-  TextEditingController _daysLeftController;
+  int _daysLeft = 20;
   int _goalGross;
   int _goalNet;
   int _goalSalary;
@@ -111,7 +108,6 @@ class _SalaryScreenState extends State<SalaryScreen> {
     _currentIntake = currentIntake;
     _intakeController = TextEditingController(text: _currentIntake.toString());
     _daysLeft = daysLeft;
-    _daysLeftController = TextEditingController(text: _daysLeft.toString());
     _goalGross = goalGross;
     _goalController = TextEditingController(text: _goalGross.toString());
     _goalNet = goalNet;
@@ -170,23 +166,25 @@ class _SalaryScreenState extends State<SalaryScreen> {
     });
   }
 
-  _updateDaysLeft(String input) {
+  _addDay() {
     setState(() {
-      if (input == null || input.isEmpty) {
-        _showDaysLeftValidationError = false;
+      if (_daysLeft == 31)
         _daysLeft = 1;
-        _setDaysLeftPref();
-      } else {
-        try {
-          final inputInt = int.parse(input);
-          _showDaysLeftValidationError = false;
-          _daysLeft = inputInt;
-          _setDaysLeftPref();
-        } on Exception catch (e) {
-          print('Error: $e');
-          _showDaysLeftValidationError = true;
-        }
-      }
+      else
+        _daysLeft += 1;
+
+      _setDaysLeftPref();
+    });
+  }
+
+  _subtractDay() {
+    setState(() {
+      if (_daysLeft == 1)
+        _daysLeft = 31;
+      else
+        _daysLeft -= 1;
+
+      _setDaysLeftPref();
     });
   }
 
@@ -286,6 +284,33 @@ class _SalaryScreenState extends State<SalaryScreen> {
       ),
     );
 
+    final daysLeft = Column(
+      children: [
+        Text(
+          LocalizedStrings.of(context).daysLeft,
+          style: TextStyle(
+            fontSize: 11.0,
+          ),
+        ),
+        Row(
+          children: [
+            IconButton(
+              icon: Icon(Icons.remove),
+              onPressed: () => _subtractDay(),
+            ),
+            Text(
+              _daysLeft.toString(),
+              style: TextStyle(fontSize: 20.0),
+            ),
+            IconButton(
+              icon: Icon(Icons.add),
+              onPressed: () => _addDay(),
+            ),
+          ],
+        ),
+      ],
+    );
+
     final currentIntakeAndDaysRow = Row(
       children: [
         Expanded(
@@ -310,28 +335,7 @@ class _SalaryScreenState extends State<SalaryScreen> {
             ),
           ),
         ),
-        Expanded(
-          child: Padding(
-            padding: EdgeInsets.only(left: 8.0),
-            child: TextField(
-              key: _daysLeftFieldKey,
-              controller: _daysLeftController,
-              style: Theme.of(context).textTheme.body1,
-              decoration: InputDecoration(
-                labelStyle: Theme.of(context).textTheme.body1,
-                errorText: _showDaysLeftValidationError
-                    ? LocalizedStrings.of(context).validationMessage
-                    : null,
-                labelText: LocalizedStrings.of(context).daysLeft,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5.0),
-                ),
-              ),
-              keyboardType: TextInputType.number,
-              onChanged: _updateDaysLeft,
-            ),
-          ),
-        ),
+        daysLeft,
       ],
     );
 
