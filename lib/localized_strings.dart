@@ -65,7 +65,7 @@ class LocalizedStrings {
       'intakeNeededToReachGoal': 'Må ta inn å oppnå mål:',
       'intakeNeededPerDay': 'Må ta inn per dag:',
       //Rebooking/Hair mask---------------------------
-      'rebookingHairMaskTitle': 'Rebooking/Hair mask'
+      'rebookingHairMaskTitle': 'Rebooking/Hårkur'
     },
   };
 
