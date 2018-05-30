@@ -1,8 +1,15 @@
 library hairdresser_calc.pref_keys;
 
-const commissionKey = 'commission';
-const currentIntakeKey = 'currentIntake';
-const daysLeftKey = 'daysLeft';
+const commissionKey = 'commissionKey';
+const todaysIntakeKey = 'todaysIntakeKey';
+const monthsIntakeKey = 'monthsIntakeKey';
+const daysLeftKey = 'daysLeftKey';
 const goalGrossKey = 'goalGrossKey';
 const goalNetKey = 'goalNetKey';
 const goalSalaryKey = 'goalSalaryKey';
+
+const totalDaysKey = 'totalDaysKey';
+const dailyClientsKey = 'dailyClientsKey';
+const totalClientsKey = 'totalClientsKey';
+const dailyHairMasksKey = 'dailyHairMasksKey';
+const totalHairMasksKey = 'totalHairMasksKey';

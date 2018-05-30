@@ -24,12 +24,12 @@ class HairdresserCalc extends StatelessWidget {
       onGenerateTitle: (BuildContext context) =>
           LocalizedStrings.of(context).appName,
       theme: ThemeData(
-        primarySwatch: Colors.purple,
+        primarySwatch: Colors.blueGrey,
         textTheme: Theme.of(context).textTheme.apply(
               bodyColor: Colors.black,
               displayColor: Colors.grey[600],
             ),
-        textSelectionHandleColor: Colors.green[800],
+        textSelectionHandleColor: Colors.teal,
       ),
       home: MainTabBar(),
     );

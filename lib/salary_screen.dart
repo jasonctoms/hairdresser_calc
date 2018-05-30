@@ -22,10 +22,12 @@ class SalaryScreen extends StatefulWidget {
 class _SalaryScreenState extends State<SalaryScreen> {
   String _commissionText;
   double _commissionValue;
-  int _currentIntake;
+  int _todaysIntake;
+  int _monthsIntake;
   bool _showIntakeValidationError = false;
   final _intakeFieldKey = GlobalKey(debugLabel: 'currentIntake');
   TextEditingController _intakeController;
+  FocusNode _intakeFocus = FocusNode();
   int _daysLeft = 20;
   int _goalGross;
   int _goalNet;
@@ -33,13 +35,21 @@ class _SalaryScreenState extends State<SalaryScreen> {
   bool _showGoalValidationError = false;
   final _goalFieldKey = GlobalKey(debugLabel: 'goal');
   TextEditingController _goalController;
+  FocusNode _goalFocus = FocusNode();
   GoalSelection _goalSelection = GoalSelection.gross;
 
+  @override
+  void dispose() {
+    _intakeFocus.dispose();
+    _goalFocus.dispose();
+    super.dispose();
+  }
+
   int _remainingIntake() {
-    if (_goalGross == null || _currentIntake == null)
+    if (_goalGross == null || _monthsIntake == null)
       return 0;
     else
-      return _goalGross - _currentIntake;
+      return _goalGross - _monthsIntake;
   }
 
   int _amountNeededPerDay() {
@@ -50,16 +60,36 @@ class _SalaryScreenState extends State<SalaryScreen> {
   }
 
   int _salaryWithCurrentIntake() {
-    if (_currentIntake == null || _commissionValue == null)
+    if (_monthsIntake == null || _commissionValue == null)
       return 0;
     else
-      return (_currentIntake * 0.8 * _commissionValue).round();
+      return (_monthsIntake * 0.8 * _commissionValue).round();
+  }
+
+  _onIntakeFocusChange() {
+      if (_intakeFocus.hasFocus) {
+        _intakeController.selection = TextSelection(
+          baseOffset: 0,
+          extentOffset: _intakeController.text.length,
+        );
+      }
+  }
+
+  _onGoalFocusChange() {
+    if (_goalFocus.hasFocus) {
+      _goalController.selection = TextSelection(
+        baseOffset: 0,
+        extentOffset: _goalController.text.length,
+      );
+    }
   }
 
   @override
   void initState() {
     super.initState();
     _setDefaultPrefs();
+    _intakeFocus.addListener(_onIntakeFocusChange);
+    _goalFocus.addListener(_onGoalFocusChange);
   }
 
   _setDefaultPrefs() async {
@@ -68,9 +98,13 @@ class _SalaryScreenState extends State<SalaryScreen> {
     if (commission == null) {
       await prefs.setDouble(prefKeys.commissionKey, 0.40);
     }
-    int currentIntake = prefs.getInt(prefKeys.currentIntakeKey);
-    if (currentIntake == null) {
-      await prefs.setInt(prefKeys.currentIntakeKey, 0);
+    int monthsIntake = prefs.getInt(prefKeys.monthsIntakeKey);
+    if (monthsIntake == null) {
+      await prefs.setInt(prefKeys.monthsIntakeKey, 0);
+    }
+    int todaysIntake = prefs.getInt(prefKeys.todaysIntakeKey);
+    if (todaysIntake == null) {
+      await prefs.setInt(prefKeys.todaysIntakeKey, 0);
     }
     int daysLeft = prefs.getInt(prefKeys.daysLeftKey);
     if (daysLeft == null) {
@@ -88,25 +122,28 @@ class _SalaryScreenState extends State<SalaryScreen> {
     if (goalSalary == null) {
       await prefs.setInt(prefKeys.goalSalaryKey, 40000);
     }
-    _getCommissionFromSharedPrefs();
+
     _getOtherValuesFromSharedPrefs();
+    _getCommissionFromSharedPrefs();
   }
 
   _getOtherValuesFromSharedPrefs() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    int currentIntake = prefs.getInt(prefKeys.currentIntakeKey);
+    int todaysIntake = prefs.getInt(prefKeys.todaysIntakeKey);
+    int monthsIntake = prefs.getInt(prefKeys.monthsIntakeKey);
     int daysLeft = prefs.getInt(prefKeys.daysLeftKey);
     int goalNet = prefs.getInt(prefKeys.goalNetKey);
     int goalGross = prefs.getInt(prefKeys.goalGrossKey);
     int goalSalary = prefs.getInt(prefKeys.goalSalaryKey);
     setState(() => _initPrefValues(
-        currentIntake, daysLeft, goalNet, goalGross, goalSalary));
+        todaysIntake, monthsIntake, daysLeft, goalNet, goalGross, goalSalary));
   }
 
-  _initPrefValues(int currentIntake, int daysLeft, int goalNet, int goalGross,
-      int goalSalary) {
-    _currentIntake = currentIntake;
-    _intakeController = TextEditingController(text: _currentIntake.toString());
+  _initPrefValues(int todaysIntake, int monthsIntake, int daysLeft, int goalNet,
+      int goalGross, int goalSalary) {
+    _todaysIntake = todaysIntake;
+    _intakeController = TextEditingController(text: _todaysIntake.toString());
+    _monthsIntake = monthsIntake;
     _daysLeft = daysLeft;
     _goalGross = goalGross;
     _goalController = TextEditingController(text: _goalGross.toString());
@@ -117,13 +154,14 @@ class _SalaryScreenState extends State<SalaryScreen> {
   _getCommissionFromSharedPrefs() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var commissionValue = prefs.getDouble(prefKeys.commissionKey);
-    var correctDecimals = commissionValue.toStringAsFixed(1);
+    var correctDecimals = commissionValue.toStringAsFixed(3);
     commissionValue = double.parse(correctDecimals);
     setState(() => _setCommission(commissionValue));
   }
 
   _setCommission(double commissionValue) {
     _commissionValue = commissionValue;
+    _goalSalary = (_goalNet * _commissionValue).round();
     _commissionText = (commissionValue * 100.0).toString();
   }
 
@@ -146,23 +184,37 @@ class _SalaryScreenState extends State<SalaryScreen> {
     }
   }
 
-  _updateCurrentIntake(String input) {
+  _updateTodaysIntake(String input) {
     setState(() {
       if (input == null || input.isEmpty) {
         _showIntakeValidationError = false;
-        _currentIntake = 0;
-        _setCurrentIntakePref();
+        _todaysIntake = 0;
+        _setTodaysIntakePref();
       } else {
         try {
           final inputInt = int.parse(input);
           _showIntakeValidationError = false;
-          _currentIntake = inputInt;
-          _setCurrentIntakePref();
+          _todaysIntake = inputInt;
+          _setTodaysIntakePref();
         } on Exception catch (e) {
           print('Error: $e');
           _showIntakeValidationError = true;
         }
       }
+    });
+  }
+
+  _addTodaysIntakeToMonth() {
+    setState(() {
+      _monthsIntake += _todaysIntake;
+      _setMonthsIntakePref();
+    });
+  }
+
+  _clearMonthlyIntake() {
+    setState(() {
+      _monthsIntake = 0;
+      _setMonthsIntakePref();
     });
   }
 
@@ -188,9 +240,14 @@ class _SalaryScreenState extends State<SalaryScreen> {
     });
   }
 
-  _setCurrentIntakePref() async {
+  _setTodaysIntakePref() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setInt(prefKeys.currentIntakeKey, _currentIntake);
+    prefs.setInt(prefKeys.todaysIntakeKey, _todaysIntake);
+  }
+
+  _setMonthsIntakePref() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt(prefKeys.monthsIntakeKey, _monthsIntake);
   }
 
   _setDaysLeftPref() async {
@@ -256,34 +313,6 @@ class _SalaryScreenState extends State<SalaryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final commissionRow = Padding(
-      padding: EdgeInsets.only(bottom: 16.0, right: 16.0, left: 16.0),
-      child: Row(
-        children: [
-          Row(
-            children: [
-              Text(LocalizedStrings.of(context).commission),
-              Padding(padding: EdgeInsets.symmetric(horizontal: 2.0)),
-              Text(
-                _setCommissionText(),
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-          FlatButton(
-            child: Text(
-              LocalizedStrings.of(context).change,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            textColor: Colors.purpleAccent,
-            onPressed: () => _openDialog(context),
-          ),
-        ],
-      ),
-    );
-
     final daysLeft = Column(
       children: [
         Text(
@@ -295,7 +324,10 @@ class _SalaryScreenState extends State<SalaryScreen> {
         Row(
           children: [
             IconButton(
-              icon: Icon(Icons.remove),
+              icon: Icon(
+                Icons.remove,
+                color: Colors.teal[400],
+              ),
               onPressed: () => _subtractDay(),
             ),
             Text(
@@ -303,7 +335,10 @@ class _SalaryScreenState extends State<SalaryScreen> {
               style: TextStyle(fontSize: 20.0),
             ),
             IconButton(
-              icon: Icon(Icons.add),
+              icon: Icon(
+                Icons.add,
+                color: Colors.teal[400],
+              ),
               onPressed: () => _addDay(),
             ),
           ],
@@ -311,31 +346,93 @@ class _SalaryScreenState extends State<SalaryScreen> {
       ],
     );
 
-    final currentIntakeAndDaysRow = Row(
+    final commission = Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: Padding(
-            padding: EdgeInsets.only(right: 8.0),
-            child: TextField(
-              key: _intakeFieldKey,
-              controller: _intakeController,
-              style: Theme.of(context).textTheme.body1,
-              decoration: InputDecoration(
-                labelStyle: Theme.of(context).textTheme.body1,
-                errorText: _showIntakeValidationError
-                    ? LocalizedStrings.of(context).validationMessage
-                    : null,
-                labelText: LocalizedStrings.of(context).currentIntake,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5.0),
-                ),
-              ),
-              keyboardType: TextInputType.number,
-              onChanged: _updateCurrentIntake,
+        Row(
+          children: [
+            Text(LocalizedStrings.of(context).commission),
+            Padding(padding: EdgeInsets.only(right:2.0),),
+            Text(
+              _setCommissionText(),
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        FlatButton(
+          child: Text(
+            LocalizedStrings.of(context).change,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
             ),
           ),
+          textColor: Colors.teal,
+          onPressed: () => _openDialog(context),
         ),
+      ],
+    );
+
+    final commissionRow = Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        commission,
         daysLeft,
+      ],
+    );
+
+    final todaysIntakeField = Expanded(
+      child: Padding(
+        padding: EdgeInsets.only(right: 8.0),
+        child: TextField(
+          key: _intakeFieldKey,
+          controller: _intakeController,
+          focusNode: _intakeFocus,
+          style: Theme.of(context).textTheme.body1,
+          decoration: InputDecoration(
+            labelStyle: Theme.of(context).textTheme.body1,
+            errorText: _showIntakeValidationError
+                ? LocalizedStrings.of(context).validationMessage
+                : null,
+            labelText: LocalizedStrings.of(context).todaysIntake,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(5.0),
+            ),
+          ),
+          keyboardType: TextInputType.number,
+          onChanged: _updateTodaysIntake,
+        ),
+      ),
+    );
+
+    final monthsIntake = Column(
+      children: [
+        Text(LocalizedStrings.of(context).monthsIntake),
+        Text(
+          _formatMoney(_monthsIntake),
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ],
+    );
+
+    final currentIntakeRow = Row(
+      children: [
+        todaysIntakeField,
+        IconButton(
+          icon: Icon(
+            Icons.arrow_forward,
+            color: Colors.teal[400],
+          ),
+          onPressed: () => _addTodaysIntakeToMonth(),
+        ),
+        monthsIntake,
+        IconButton(
+          icon: Icon(
+            Icons.clear,
+            color: Colors.red,
+          ),
+          onPressed: () => _clearMonthlyIntake(),
+        ),
       ],
     );
 
@@ -389,6 +486,7 @@ class _SalaryScreenState extends State<SalaryScreen> {
       TextField(
         key: _goalFieldKey,
         controller: _goalController,
+        focusNode: _goalFocus,
         style: Theme.of(context).textTheme.body1,
         decoration: InputDecoration(
           labelStyle: Theme.of(context).textTheme.body1,
@@ -447,7 +545,7 @@ class _SalaryScreenState extends State<SalaryScreen> {
             _formatMoney(_salaryWithCurrentIntake()),
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: Colors.purple[600],
+              color: Colors.teal[300],
             ),
           ),
         ],
@@ -486,7 +584,7 @@ class _SalaryScreenState extends State<SalaryScreen> {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: Colors.purple[600],
+                      color: Colors.teal[300],
                       fontSize: 30.0),
                 ),
               ),
@@ -498,7 +596,7 @@ class _SalaryScreenState extends State<SalaryScreen> {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: Colors.purple[600],
+                      color: Colors.teal[300],
                       fontSize: 30.0),
                 ),
               ),
@@ -514,7 +612,7 @@ class _SalaryScreenState extends State<SalaryScreen> {
         child: Column(
           children: [
             commissionRow,
-            currentIntakeAndDaysRow,
+            currentIntakeRow,
             goal,
             goalInfo,
             currentSalary,

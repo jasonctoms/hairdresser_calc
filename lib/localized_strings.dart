@@ -17,13 +17,15 @@ class LocalizedStrings {
       'appName': 'Hairdre\$\$er',
       'cancel': 'Cancel',
       'done': 'Done',
+      'clear': 'CLEAR',
       //SalaryScreen---------------------------------
       'commission': 'Commission:',
       'currentCommission': 'Current commission:',
       'commissionPercent': 'Commission %',
       'change': 'CHANGE',
       'validationMessage': 'Invalid number entered',
-      'currentIntake': 'Current Intake',
+      'todaysIntake': 'Today\'s Intake',
+      'monthsIntake': 'Month\'s Intake',
       'daysLeft': 'Days Left',
       'goalGross': 'Goal Gross',
       'goalNet': 'Goal Net',
@@ -44,13 +46,15 @@ class LocalizedStrings {
       'appName': 'Fri\$ør',
       'cancel': 'Avbryt',
       'done': 'Ferdig',
+      'clear': 'TOMT',
       //SalaryScreen---------------------------------
       'commission': 'Provisjon:',
       'currentCommission': 'Nåværende provisjon:',
       'commissionPercent': 'Provisjon %',
       'change': 'ENDRE',
       'validationMessage': 'Ugyldig nummer inntastet',
-      'currentIntake': 'Nåværende Inntak',
+      'todaysIntake': 'Dagens Inntak',
+      'monthsIntake': 'Måneds Inntak:',
       'daysLeft': 'Dager Igjen',
       'goalGross': 'Mål Brutto',
       'goalNet': 'Mål Netto',
@@ -81,6 +85,10 @@ class LocalizedStrings {
     return _localizedValues[locale.languageCode]['done'];
   }
 
+  String get clear {
+    return _localizedValues[locale.languageCode]['clear'];
+  }
+
   String get commission {
     return _localizedValues[locale.languageCode]['commission'];
   }
@@ -101,8 +109,12 @@ class LocalizedStrings {
     return _localizedValues[locale.languageCode]['validationMessage'];
   }
 
-  String get currentIntake {
-    return _localizedValues[locale.languageCode]['currentIntake'];
+  String get todaysIntake {
+    return _localizedValues[locale.languageCode]['todaysIntake'];
+  }
+
+  String get monthsIntake {
+    return _localizedValues[locale.languageCode]['monthsIntake'];
   }
 
   String get daysLeft {
