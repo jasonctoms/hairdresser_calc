@@ -3,23 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'pref_keys.dart' as prefKeys;
+import 'package:hairdresser_calc/incdec_widget.dart';
 import 'package:hairdresser_calc/localized_strings.dart';
 
-class OtherCalculations extends StatefulWidget{
+class OtherCalculations extends StatefulWidget {
   OtherCalculations({Key key}) : super(key: key);
 
   @override
   _OtherCalculationsState createState() => _OtherCalculationsState();
 }
 
-class _OtherCalculationsState extends State<OtherCalculations>{
+class _OtherCalculationsState extends State<OtherCalculations> {
   int _dailyClients;
-  bool _showDailyClientsValidationError = false;
-  final _dailyClientsFieldKey = GlobalKey(debugLabel: 'dailyClientsFieldKey');
   int _totalClients;
+  int _dailyRebooking;
+  int _totalRebooking;
   int _dailyHairMasks;
-  bool _showDailyHairMasksValidationError = false;
-  final _dailyHairMasksFieldKey = GlobalKey(debugLabel: 'dailyHairMasksFieldKey');
   int _totalHairMasks;
   int _totalDays;
   double _dailyRebookingPercent;
@@ -35,37 +34,113 @@ class _OtherCalculationsState extends State<OtherCalculations>{
 
   _setDefaultPrefs() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    int totalDays = prefs.getInt(prefKeys.totalDaysKey);
+    if (totalDays == null) {
+      await prefs.setInt(prefKeys.totalDaysKey, 1);
+    }
     int dailyClients = prefs.getInt(prefKeys.dailyClientsKey);
     if (dailyClients == null) {
       await prefs.setInt(prefKeys.dailyClientsKey, 1);
     }
     int totalClients = prefs.getInt(prefKeys.totalClientsKey);
     if (totalClients == null) {
-      await prefs.setInt(prefKeys.totalClientsKey, 20);
+      await prefs.setInt(prefKeys.totalClientsKey, 0);
+    }
+    int dailyRebooking = prefs.getInt(prefKeys.dailyRebookingKey);
+    if (dailyRebooking == null) {
+      await prefs.setInt(prefKeys.dailyRebookingKey, 1);
+    }
+    int totalRebooking = prefs.getInt(prefKeys.totalRebookingKey);
+    if (totalRebooking == null) {
+      await prefs.setInt(prefKeys.totalRebookingKey, 0);
     }
     int dailyHairMasks = prefs.getInt(prefKeys.dailyHairMasksKey);
     if (dailyHairMasks == null) {
-      await prefs.setInt(prefKeys.dailyHairMasksKey, 5);
+      await prefs.setInt(prefKeys.dailyHairMasksKey, 1);
     }
     int totalHairMasks = prefs.getInt(prefKeys.totalHairMasksKey);
     if (totalHairMasks == null) {
-      await prefs.setInt(prefKeys.totalHairMasksKey, 10);
-    }
-    int totalDays = prefs.getInt(prefKeys.totalDaysKey);
-    if (totalDays == null) {
-      await prefs.setInt(prefKeys.totalDaysKey, 1);
+      await prefs.setInt(prefKeys.totalHairMasksKey, 0);
     }
     _getValuesFromSharedPrefs();
   }
 
-  _getValuesFromSharedPrefs(){
-
+  _getValuesFromSharedPrefs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int totalDays = prefs.getInt(prefKeys.totalDaysKey);
+    int dailyClients = prefs.getInt(prefKeys.dailyClientsKey);
+    int totalClients = prefs.getInt(prefKeys.totalClientsKey);
+    int dailyRebooking = prefs.getInt(prefKeys.dailyRebookingKey);
+    int totalRebooking = prefs.getInt(prefKeys.totalRebookingKey);
+    int dailyHairMasks = prefs.getInt(prefKeys.dailyHairMasksKey);
+    int totalHairMasks = prefs.getInt(prefKeys.totalHairMasksKey);
+    setState(() => _initPrefValues(totalDays, dailyClients, totalClients,
+        dailyRebooking, totalRebooking, dailyHairMasks, totalHairMasks));
   }
 
+  _initPrefValues(
+      int totalDays,
+      int dailyClients,
+      int totalClients,
+      int dailyRebooking,
+      int totalRebooking,
+      int dailyHairMasks,
+      int totalHairMasks) {
+    _totalDays = totalDays;
+    _dailyClients = dailyClients;
+    _totalClients = totalClients;
+    _dailyRebooking = dailyRebooking;
+    _totalRebooking = totalRebooking;
+    _dailyHairMasks = dailyHairMasks;
+    _totalHairMasks = totalHairMasks;
+  }
+
+  _addDay() {
+    setState(() {
+      if (_totalDays == 31)
+        _totalDays = 1;
+      else
+        _totalDays += 1;
+
+      _setTotalDaysPref();
+    });
+  }
+
+  _subtractDay() {
+    setState(() {
+      if (_totalDays == 1)
+        _totalDays = 31;
+      else
+        _totalDays -= 1;
+
+      _setTotalDaysPref();
+    });
+  }
+
+  _setTotalDaysPref() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt(prefKeys.totalDaysKey, _totalDays);
+  }
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-  }
+    final daysLeft =  IncDecWidget(
+        titleOnTop: false,
+        title: 'Total Days:',
+        value: _totalDays,
+        incrementFunction: _addDay,
+        decrementFunction: _subtractDay,
+    );
 
+    return new SingleChildScrollView(
+      child: Container(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            daysLeft,
+          ],
+        ),
+      ),
+    );
+  }
 }

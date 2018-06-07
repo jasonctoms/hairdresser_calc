@@ -6,9 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'pref_keys.dart' as prefKeys;
 import 'package:hairdresser_calc/commission_dialog.dart';
+import 'package:hairdresser_calc/incdec_widget.dart';
 import 'package:hairdresser_calc/localized_strings.dart';
-
-const _padding = EdgeInsets.all(16.0);
 
 enum GoalSelection { gross, net, salary }
 
@@ -67,12 +66,12 @@ class _SalaryScreenState extends State<SalaryScreen> {
   }
 
   _onIntakeFocusChange() {
-      if (_intakeFocus.hasFocus) {
-        _intakeController.selection = TextSelection(
-          baseOffset: 0,
-          extentOffset: _intakeController.text.length,
-        );
-      }
+    if (_intakeFocus.hasFocus) {
+      _intakeController.selection = TextSelection(
+        baseOffset: 0,
+        extentOffset: _intakeController.text.length,
+      );
+    }
   }
 
   _onGoalFocusChange() {
@@ -313,37 +312,12 @@ class _SalaryScreenState extends State<SalaryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final daysLeft = Column(
-      children: [
-        Text(
-          LocalizedStrings.of(context).daysLeft,
-          style: TextStyle(
-            fontSize: 11.0,
-          ),
-        ),
-        Row(
-          children: [
-            IconButton(
-              icon: Icon(
-                Icons.remove,
-                color: Colors.teal[400],
-              ),
-              onPressed: () => _subtractDay(),
-            ),
-            Text(
-              _daysLeft.toString(),
-              style: TextStyle(fontSize: 20.0),
-            ),
-            IconButton(
-              icon: Icon(
-                Icons.add,
-                color: Colors.teal[400],
-              ),
-              onPressed: () => _addDay(),
-            ),
-          ],
-        ),
-      ],
+    final daysLeft = IncDecWidget(
+      titleOnTop: true,
+      title: LocalizedStrings.of(context).daysLeft,
+      value: _daysLeft,
+      incrementFunction: _addDay,
+      decrementFunction: _subtractDay,
     );
 
     final commission = Column(
@@ -353,7 +327,9 @@ class _SalaryScreenState extends State<SalaryScreen> {
         Row(
           children: [
             Text(LocalizedStrings.of(context).commission),
-            Padding(padding: EdgeInsets.only(right:2.0),),
+            Padding(
+              padding: EdgeInsets.only(right: 2.0),
+            ),
             Text(
               _setCommissionText(),
               style: TextStyle(fontWeight: FontWeight.bold),
@@ -608,7 +584,7 @@ class _SalaryScreenState extends State<SalaryScreen> {
 
     return new SingleChildScrollView(
       child: Container(
-        padding: _padding,
+        padding: EdgeInsets.all(16.0),
         child: Column(
           children: [
             commissionRow,

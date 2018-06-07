@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:hairdresser_calc/localized_strings.dart';
 import 'package:hairdresser_calc/salary_screen.dart';
+import 'package:hairdresser_calc/other_calculations.dart';
 
 class MainTabBar extends StatelessWidget {
   @override
@@ -21,7 +22,7 @@ class MainTabBar extends StatelessWidget {
         body: TabBarView(
           children: [
             SalaryScreen(),
-            Icon(Icons.hot_tub),
+            OtherCalculations(),
           ],
         ),
       ),

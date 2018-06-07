@@ -11,5 +11,7 @@ const goalSalaryKey = 'goalSalaryKey';
 const totalDaysKey = 'totalDaysKey';
 const dailyClientsKey = 'dailyClientsKey';
 const totalClientsKey = 'totalClientsKey';
+const dailyRebookingKey = 'dailyRebookingKey';
+const totalRebookingKey = 'totalRebookingKey';
 const dailyHairMasksKey = 'dailyHairMasksKey';
 const totalHairMasksKey = 'totalHairMasksKey';
