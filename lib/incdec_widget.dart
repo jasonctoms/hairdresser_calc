@@ -14,9 +14,7 @@ class IncDecWidget extends StatelessWidget {
     @required this.value,
     @required this.incrementFunction,
     @required this.decrementFunction,
-  })  : assert(titleOnTop != null),
-        assert(title != null),
-        assert(value != null),
+  })  : assert(value != null),
         assert(incrementFunction != null),
         assert(decrementFunction != null);
 
@@ -32,7 +30,9 @@ class IncDecWidget extends StatelessWidget {
 
     final number = Text(
       value.toString(),
-      style: TextStyle(fontSize: 20.0),
+      style: TextStyle(
+        fontSize: 20.0,
+      ),
     );
 
     final add = IconButton(
@@ -43,16 +43,24 @@ class IncDecWidget extends StatelessWidget {
       onPressed: incrementFunction,
     );
 
-    if (titleOnTop) {
+    if (title == null){
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          subtract,
+          number,
+          add,
+        ],
+      );
+    }
+    else if (titleOnTop) {
       return Column(
         children: [
           Text(
             title,
-            style: TextStyle(
-              fontSize: 11.0,
-            ),
           ),
           Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               subtract,
               number,

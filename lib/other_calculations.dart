@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hairdresser_calc/other_calc_widget.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -122,14 +123,93 @@ class _OtherCalculationsState extends State<OtherCalculations> {
     prefs.setInt(prefKeys.totalDaysKey, _totalDays);
   }
 
+  _addClient() {
+    setState(() {
+      _dailyClients += 1;
+
+      _setDailyClientsPref();
+    });
+  }
+
+  _subtractClient() {
+    setState(() {
+      if (_dailyClients == 0)
+        _dailyClients = 0;
+      else
+        _dailyClients -= 1;
+
+      _setDailyClientsPref();
+    });
+  }
+
+  _setDailyClientsPref() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt(prefKeys.dailyClientsKey, _dailyClients);
+  }
+
+  _addDailyClientsToTotal() {
+    setState(() {
+      _totalClients += _dailyClients;
+      _setTotalClientsPref();
+    });
+  }
+
+  _clearTotalClients() {
+    setState(() {
+      _totalClients = 0;
+      _setTotalClientsPref();
+    });
+  }
+
+  _setTotalClientsPref() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt(prefKeys.totalClientsKey, _totalClients);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final daysLeft =  IncDecWidget(
-        titleOnTop: false,
-        title: 'Total Days:',
-        value: _totalDays,
-        incrementFunction: _addDay,
-        decrementFunction: _subtractDay,
+    final daysLeft = IncDecWidget(
+      titleOnTop: false,
+      title: 'Total Days:',
+      value: _totalDays,
+      incrementFunction: _addDay,
+      decrementFunction: _subtractDay,
+    );
+
+    final clients = OtherCalcWidget(
+      incDecWidget: IncDecWidget(
+        value: _dailyClients,
+        incrementFunction: _addClient,
+        decrementFunction: _subtractClient,
+      ),
+      title: 'Clients:',
+      totalValue: _totalClients,
+      addToTotalFunction: _addDailyClientsToTotal,
+      clearFunction: _clearTotalClients,
+    );
+
+    final rebooking = OtherCalcWidget(
+      incDecWidget: IncDecWidget(
+        value: _dailyRebooking,
+        incrementFunction: _addClient,
+        decrementFunction: _subtractClient,
+      ),
+      title: 'Rebooking:',
+      totalValue: _totalRebooking,
+      addToTotalFunction: _addDailyClientsToTotal,
+      clearFunction: _clearTotalClients,
+    );
+
+    final hairMasks = OtherCalcWidget(
+      incDecWidget: IncDecWidget(
+        value: _dailyHairMasks,
+        incrementFunction: _addClient,
+        decrementFunction: _subtractClient,
+      ),
+      title: 'Hair masks:',
+      totalValue: _totalHairMasks,
+      addToTotalFunction: _addDailyClientsToTotal,
+      clearFunction: _clearTotalClients,
     );
 
     return new SingleChildScrollView(
@@ -138,6 +218,9 @@ class _OtherCalculationsState extends State<OtherCalculations> {
         child: Column(
           children: [
             daysLeft,
+            clients,
+            rebooking,
+            hairMasks,
           ],
         ),
       ),
