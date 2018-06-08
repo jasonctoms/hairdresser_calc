@@ -15,17 +15,12 @@ class OtherCalculations extends StatefulWidget {
 }
 
 class _OtherCalculationsState extends State<OtherCalculations> {
-  int _dailyClients;
-  int _totalClients;
-  int _dailyRebooking;
-  int _totalRebooking;
-  int _dailyHairMasks;
-  int _totalHairMasks;
-  int _totalDays;
-  double _dailyRebookingPercent;
-  double _totalRebookingPercent;
-  double _dailyHairMasksPercent;
-  double _totalHairMasksPercent;
+  int _dailyClients = 0;
+  int _totalClients = 0;
+  int _dailyRebooking = 0;
+  int _totalRebooking = 0;
+  int _dailyHairMasks = 0;
+  int _totalHairMasks = 0;
 
   @override
   void initState() {
@@ -35,10 +30,6 @@ class _OtherCalculationsState extends State<OtherCalculations> {
 
   _setDefaultPrefs() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    int totalDays = prefs.getInt(prefKeys.totalDaysKey);
-    if (totalDays == null) {
-      await prefs.setInt(prefKeys.totalDaysKey, 1);
-    }
     int dailyClients = prefs.getInt(prefKeys.dailyClientsKey);
     if (dailyClients == null) {
       await prefs.setInt(prefKeys.dailyClientsKey, 1);
@@ -68,59 +59,24 @@ class _OtherCalculationsState extends State<OtherCalculations> {
 
   _getValuesFromSharedPrefs() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    int totalDays = prefs.getInt(prefKeys.totalDaysKey);
     int dailyClients = prefs.getInt(prefKeys.dailyClientsKey);
     int totalClients = prefs.getInt(prefKeys.totalClientsKey);
     int dailyRebooking = prefs.getInt(prefKeys.dailyRebookingKey);
     int totalRebooking = prefs.getInt(prefKeys.totalRebookingKey);
     int dailyHairMasks = prefs.getInt(prefKeys.dailyHairMasksKey);
     int totalHairMasks = prefs.getInt(prefKeys.totalHairMasksKey);
-    setState(() => _initPrefValues(totalDays, dailyClients, totalClients,
-        dailyRebooking, totalRebooking, dailyHairMasks, totalHairMasks));
+    setState(() => _initPrefValues(dailyClients, totalClients, dailyRebooking,
+        totalRebooking, dailyHairMasks, totalHairMasks));
   }
 
-  _initPrefValues(
-      int totalDays,
-      int dailyClients,
-      int totalClients,
-      int dailyRebooking,
-      int totalRebooking,
-      int dailyHairMasks,
-      int totalHairMasks) {
-    _totalDays = totalDays;
+  _initPrefValues(int dailyClients, int totalClients, int dailyRebooking,
+      int totalRebooking, int dailyHairMasks, int totalHairMasks) {
     _dailyClients = dailyClients;
     _totalClients = totalClients;
     _dailyRebooking = dailyRebooking;
     _totalRebooking = totalRebooking;
     _dailyHairMasks = dailyHairMasks;
     _totalHairMasks = totalHairMasks;
-  }
-
-  _addDay() {
-    setState(() {
-      if (_totalDays == 31)
-        _totalDays = 1;
-      else
-        _totalDays += 1;
-
-      _setTotalDaysPref();
-    });
-  }
-
-  _subtractDay() {
-    setState(() {
-      if (_totalDays == 1)
-        _totalDays = 31;
-      else
-        _totalDays -= 1;
-
-      _setTotalDaysPref();
-    });
-  }
-
-  _setTotalDaysPref() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setInt(prefKeys.totalDaysKey, _totalDays);
   }
 
   _addClient() {
@@ -166,23 +122,131 @@ class _OtherCalculationsState extends State<OtherCalculations> {
     prefs.setInt(prefKeys.totalClientsKey, _totalClients);
   }
 
+  _addRebooking() {
+    setState(() {
+      _dailyRebooking += 1;
+
+      _setDailyRebookingPref();
+    });
+  }
+
+  _subtractRebooking() {
+    setState(() {
+      if (_dailyRebooking == 0)
+        _dailyRebooking = 0;
+      else
+        _dailyRebooking -= 1;
+
+      _setDailyRebookingPref();
+    });
+  }
+
+  _setDailyRebookingPref() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt(prefKeys.dailyRebookingKey, _dailyRebooking);
+  }
+
+  _addDailyRebookingToTotal() {
+    setState(() {
+      _totalRebooking += _dailyRebooking;
+      _setTotalRebookingPref();
+    });
+  }
+
+  _clearTotalRebooking() {
+    setState(() {
+      _totalRebooking = 0;
+      _setTotalRebookingPref();
+    });
+  }
+
+  _setTotalRebookingPref() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt(prefKeys.totalRebookingKey, _totalRebooking);
+  }
+
+  _addHairMask() {
+    setState(() {
+      _dailyHairMasks += 1;
+
+      _setDailyHairMasksPref();
+    });
+  }
+
+  _subtractHairMask() {
+    setState(() {
+      if (_dailyHairMasks == 0)
+        _dailyHairMasks = 0;
+      else
+        _dailyHairMasks -= 1;
+
+      _setDailyHairMasksPref();
+    });
+  }
+
+  _setDailyHairMasksPref() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt(prefKeys.dailyHairMasksKey, _dailyHairMasks);
+  }
+
+  _addDailyHairMasksToTotal() {
+    setState(() {
+      _totalHairMasks += _dailyHairMasks;
+      _setTotalHairMasksPref();
+    });
+  }
+
+  _clearTotalHairMasks() {
+    setState(() {
+      _totalHairMasks = 0;
+      _setTotalHairMasksPref();
+    });
+  }
+
+  _setTotalHairMasksPref() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt(prefKeys.totalHairMasksKey, _totalHairMasks);
+  }
+
+  Widget _percentageWidget(String title, int variable, int clients) {
+    double value;
+    if (clients == 0)
+      value = 0.0;
+    else
+      value = (variable / clients) * 100.0;
+
+    return Column(
+      children: [
+        Text(title),
+        Text(
+          value.toStringAsPrecision(3) + '%',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: _percentageColor(value),
+            fontSize: 30.0,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Color _percentageColor(double value) {
+    if (value < 30.0) return Colors.red;
+    if (value < 60.0) return Colors.orange;
+    return Colors.green;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final daysLeft = IncDecWidget(
-      titleOnTop: false,
-      title: 'Total Days:',
-      value: _totalDays,
-      incrementFunction: _addDay,
-      decrementFunction: _subtractDay,
-    );
-
     final clients = OtherCalcWidget(
       incDecWidget: IncDecWidget(
+        titleOnTop: true,
+        title: 'Daily Clients',
         value: _dailyClients,
         incrementFunction: _addClient,
         decrementFunction: _subtractClient,
       ),
-      title: 'Clients:',
+      title: 'Total Clients',
       totalValue: _totalClients,
       addToTotalFunction: _addDailyClientsToTotal,
       clearFunction: _clearTotalClients,
@@ -190,26 +254,62 @@ class _OtherCalculationsState extends State<OtherCalculations> {
 
     final rebooking = OtherCalcWidget(
       incDecWidget: IncDecWidget(
+        titleOnTop: true,
+        title: 'Daily Rebooking',
         value: _dailyRebooking,
-        incrementFunction: _addClient,
-        decrementFunction: _subtractClient,
+        incrementFunction: _addRebooking,
+        decrementFunction: _subtractRebooking,
       ),
-      title: 'Rebooking:',
+      title: 'Total Rebooking',
       totalValue: _totalRebooking,
-      addToTotalFunction: _addDailyClientsToTotal,
-      clearFunction: _clearTotalClients,
+      addToTotalFunction: _addDailyRebookingToTotal,
+      clearFunction: _clearTotalRebooking,
     );
 
     final hairMasks = OtherCalcWidget(
       incDecWidget: IncDecWidget(
+        titleOnTop: true,
+        title: 'Daily Hair Masks',
         value: _dailyHairMasks,
-        incrementFunction: _addClient,
-        decrementFunction: _subtractClient,
+        incrementFunction: _addHairMask,
+        decrementFunction: _subtractHairMask,
       ),
-      title: 'Hair masks:',
+      title: 'Total Hair Masks',
       totalValue: _totalHairMasks,
-      addToTotalFunction: _addDailyClientsToTotal,
-      clearFunction: _clearTotalClients,
+      addToTotalFunction: _addDailyHairMasksToTotal,
+      clearFunction: _clearTotalHairMasks,
+    );
+
+    final rebookingPercents = Padding(
+      padding: EdgeInsets.only(
+        bottom: 16.0,
+        top: 16.0,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _percentageWidget(
+              'Daily Rebooking %', _dailyRebooking, _dailyClients),
+          _percentageWidget(
+              'Total Rebooking %', _totalRebooking, _totalClients),
+        ],
+      ),
+    );
+
+    final hairMaskPercents = Padding(
+      padding: EdgeInsets.only(
+        bottom: 16.0,
+        top: 16.0,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _percentageWidget(
+              'Daily Hair Mask %', _dailyHairMasks, _dailyClients),
+          _percentageWidget(
+              'Total Hair Mask %', _totalHairMasks, _totalClients),
+        ],
+      ),
     );
 
     return new SingleChildScrollView(
@@ -217,10 +317,11 @@ class _OtherCalculationsState extends State<OtherCalculations> {
         padding: EdgeInsets.all(16.0),
         child: Column(
           children: [
-            daysLeft,
             clients,
             rebooking,
             hairMasks,
+            rebookingPercents,
+            hairMaskPercents,
           ],
         ),
       ),

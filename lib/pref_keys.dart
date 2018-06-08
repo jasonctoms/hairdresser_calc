@@ -8,7 +8,6 @@ const goalGrossKey = 'goalGrossKey';
 const goalNetKey = 'goalNetKey';
 const goalSalaryKey = 'goalSalaryKey';
 
-const totalDaysKey = 'totalDaysKey';
 const dailyClientsKey = 'dailyClientsKey';
 const totalClientsKey = 'totalClientsKey';
 const dailyRebookingKey = 'dailyRebookingKey';

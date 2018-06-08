@@ -9,8 +9,8 @@ class IncDecWidget extends StatelessWidget {
   final Function decrementFunction;
 
   const IncDecWidget({
-    @required this.titleOnTop,
-    @required this.title,
+    this.titleOnTop,
+    this.title,
     @required this.value,
     @required this.incrementFunction,
     @required this.decrementFunction,
@@ -43,7 +43,7 @@ class IncDecWidget extends StatelessWidget {
       onPressed: incrementFunction,
     );
 
-    if (title == null){
+    if (title == null) {
       return Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -52,8 +52,7 @@ class IncDecWidget extends StatelessWidget {
           add,
         ],
       );
-    }
-    else if (titleOnTop) {
+    } else if (titleOnTop) {
       return Column(
         children: [
           Text(

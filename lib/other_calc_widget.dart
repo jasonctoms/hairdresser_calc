@@ -44,9 +44,12 @@ class OtherCalcWidget extends StatelessWidget {
 
     final total = Expanded(
       flex: 2,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Column(
         children: [
+          Padding(
+            padding: EdgeInsets.only(bottom: 8.0),
+            child: Text(title),
+          ),
           Text(
             totalValue.toString(),
             style: TextStyle(
@@ -54,29 +57,28 @@ class OtherCalcWidget extends StatelessWidget {
               fontSize: 20.0,
             ),
           ),
-          IconButton(
-            icon: Icon(
-              Icons.clear,
-              color: Colors.red,
-            ),
-            onPressed: clearFunction,
-          ),
         ],
       ),
     );
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start, children:
-    [
-      Text(title),
-    Row(
-      children: [
-        incDec,
-        addToTotalButton,
-        total,
-      ],
-    ),
-      ],
+    final clearButton = IconButton(
+      icon: Icon(
+        Icons.clear,
+        color: Colors.red,
+      ),
+      onPressed: clearFunction,
+    );
+
+    return Padding(
+      padding: EdgeInsets.only(top: 8.0),
+      child: Row(
+        children: [
+          incDec,
+          addToTotalButton,
+          total,
+          clearButton,
+        ],
+      ),
     );
   }
 }
