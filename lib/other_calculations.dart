@@ -7,6 +7,8 @@ import 'pref_keys.dart' as prefKeys;
 import 'package:hairdresser_calc/incdec_widget.dart';
 import 'package:hairdresser_calc/localized_strings.dart';
 
+enum MetricType { rebooking, hairMask }
+
 class OtherCalculations extends StatefulWidget {
   OtherCalculations({Key key}) : super(key: key);
 
@@ -208,7 +210,8 @@ class _OtherCalculationsState extends State<OtherCalculations> {
     prefs.setInt(prefKeys.totalHairMasksKey, _totalHairMasks);
   }
 
-  Widget _percentageWidget(String title, int variable, int clients) {
+  Widget _percentageWidget(
+      String title, int variable, int clients, MetricType metricType) {
     double value;
     if (clients == 0)
       value = 0.0;
@@ -222,7 +225,7 @@ class _OtherCalculationsState extends State<OtherCalculations> {
           value.toStringAsPrecision(3) + '%',
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: _percentageColor(value),
+            color: _percentageColor(value, metricType),
             fontSize: 30.0,
           ),
         ),
@@ -230,10 +233,17 @@ class _OtherCalculationsState extends State<OtherCalculations> {
     );
   }
 
-  Color _percentageColor(double value) {
-    if (value < 30.0) return Colors.red;
-    if (value < 60.0) return Colors.orange;
-    return Colors.green;
+  Color _percentageColor(double value, MetricType metricType) {
+    if (metricType == MetricType.rebooking) {
+      if (value < 15.0) return Colors.red;
+      if (value < 25.0) return Colors.orange;
+      return Colors.green;
+    } else if (metricType == MetricType.hairMask) {
+      if (value < 10.0) return Colors.red;
+      if (value < 12.5) return Colors.orange;
+      return Colors.green;
+    } else
+      return Colors.blueGrey;
   }
 
   @override
@@ -241,12 +251,12 @@ class _OtherCalculationsState extends State<OtherCalculations> {
     final clients = OtherCalcWidget(
       incDecWidget: IncDecWidget(
         titleOnTop: true,
-        title: 'Daily Clients',
+        title: LocalizedStrings.of(context).dailyClients,
         value: _dailyClients,
         incrementFunction: _addClient,
         decrementFunction: _subtractClient,
       ),
-      title: 'Total Clients',
+      title: LocalizedStrings.of(context).totalClients,
       totalValue: _totalClients,
       addToTotalFunction: _addDailyClientsToTotal,
       clearFunction: _clearTotalClients,
@@ -255,12 +265,12 @@ class _OtherCalculationsState extends State<OtherCalculations> {
     final rebooking = OtherCalcWidget(
       incDecWidget: IncDecWidget(
         titleOnTop: true,
-        title: 'Daily Rebooking',
+        title: LocalizedStrings.of(context).dailyRebooking,
         value: _dailyRebooking,
         incrementFunction: _addRebooking,
         decrementFunction: _subtractRebooking,
       ),
-      title: 'Total Rebooking',
+      title: LocalizedStrings.of(context).totalRebooking,
       totalValue: _totalRebooking,
       addToTotalFunction: _addDailyRebookingToTotal,
       clearFunction: _clearTotalRebooking,
@@ -269,12 +279,12 @@ class _OtherCalculationsState extends State<OtherCalculations> {
     final hairMasks = OtherCalcWidget(
       incDecWidget: IncDecWidget(
         titleOnTop: true,
-        title: 'Daily Hair Masks',
+        title: LocalizedStrings.of(context).dailyHairMasks,
         value: _dailyHairMasks,
         incrementFunction: _addHairMask,
         decrementFunction: _subtractHairMask,
       ),
-      title: 'Total Hair Masks',
+      title: LocalizedStrings.of(context).totalHairMasks,
       totalValue: _totalHairMasks,
       addToTotalFunction: _addDailyHairMasksToTotal,
       clearFunction: _clearTotalHairMasks,
@@ -288,10 +298,10 @@ class _OtherCalculationsState extends State<OtherCalculations> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _percentageWidget(
-              'Daily Rebooking %', _dailyRebooking, _dailyClients),
-          _percentageWidget(
-              'Total Rebooking %', _totalRebooking, _totalClients),
+          _percentageWidget(LocalizedStrings.of(context).dailyRebooking + ' %',
+              _dailyRebooking, _dailyClients, MetricType.rebooking),
+          _percentageWidget(LocalizedStrings.of(context).totalRebooking + ' %',
+              _totalRebooking, _totalClients, MetricType.rebooking),
         ],
       ),
     );
@@ -304,10 +314,10 @@ class _OtherCalculationsState extends State<OtherCalculations> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _percentageWidget(
-              'Daily Hair Mask %', _dailyHairMasks, _dailyClients),
-          _percentageWidget(
-              'Total Hair Mask %', _totalHairMasks, _totalClients),
+          _percentageWidget(LocalizedStrings.of(context).dailyHairMasks + ' %',
+              _dailyHairMasks, _dailyClients, MetricType.hairMask),
+          _percentageWidget(LocalizedStrings.of(context).totalHairMasks + ' %',
+              _totalHairMasks, _totalClients, MetricType.hairMask),
         ],
       ),
     );

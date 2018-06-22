@@ -40,7 +40,13 @@ class LocalizedStrings {
       'intakeNeededToReachGoal': 'Intake needed to reach goal:',
       'intakeNeededPerDay': 'Intake needed per day:',
       //Rebooking/Hair mask---------------------------
-      'rebookingHairMaskTitle': 'Rebooking/Hair mask'
+      'rebookingHairMaskTitle': 'Rebooking/Hair mask',
+      'dailyClients': 'Daily Clients',
+      'totalClients': 'Total Clients',
+      'dailyRebooking': 'Daily Rebooking',
+      'totalRebooking': 'Total Rebooking',
+      'dailyHairMasks': 'Daily Hair Masks',
+      'totalHairMasks': 'Total Hair Masks',
     },
     'nb': {
       'appName': 'Fri\$ør',
@@ -69,7 +75,13 @@ class LocalizedStrings {
       'intakeNeededToReachGoal': 'Må ta inn å oppnå mål:',
       'intakeNeededPerDay': 'Må ta inn per dag:',
       //Rebooking/Hair mask---------------------------
-      'rebookingHairMaskTitle': 'Rebooking/Hårkur'
+      'rebookingHairMaskTitle': 'Rebooking/Hårkur',
+      'dailyClients': 'Daglige Klienter',
+      'totalClients': 'Totale Klienter',
+      'dailyRebooking': 'Daglige Rebooking',
+      'totalRebooking': 'Totale Rebooking',
+      'dailyHairMasks': 'Daglige Hårkur',
+      'totalHairMasks': 'Totale Hårkur',
     },
   };
 
@@ -171,6 +183,30 @@ class LocalizedStrings {
 
   String get rebookingHairMaskTitle {
     return _localizedValues[locale.languageCode]['rebookingHairMaskTitle'];
+  }
+
+  String get dailyClients {
+    return _localizedValues[locale.languageCode]['dailyClients'];
+  }
+
+  String get totalClients {
+    return _localizedValues[locale.languageCode]['totalClients'];
+  }
+
+  String get dailyRebooking {
+    return _localizedValues[locale.languageCode]['dailyRebooking'];
+  }
+
+  String get totalRebooking {
+    return _localizedValues[locale.languageCode]['totalRebooking'];
+  }
+
+  String get dailyHairMasks {
+    return _localizedValues[locale.languageCode]['dailyHairMasks'];
+  }
+
+  String get totalHairMasks {
+    return _localizedValues[locale.languageCode]['totalHairMasks'];
   }
 }
 
