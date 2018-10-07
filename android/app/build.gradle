@@ -19,7 +19,7 @@ def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
 
     lintOptions {
         disable 'InvalidPackage'
@@ -28,9 +28,9 @@ android {
     defaultConfig {
         applicationId "com.jorbital.hairdressercalc"
         minSdkVersion 21
-        targetSdkVersion 27
-        versionCode 7
-        versionName "1.1.0"
+        targetSdkVersion 28
+        versionCode 8
+        versionName "1.1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
